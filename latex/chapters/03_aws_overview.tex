@@ -1,0 +1,18 @@
+\chapter{AWS Selection Rationale and Ecosystem}
+\label{chap:aws_overview}
+
+\section{Why Amazon Web Services (AWS)?}
+Amazon Web Services (AWS) was selected as the cloud infrastructure provider for this system due to its comprehensive service ecosystem, industry-leading reliability, fine-grained identity security, and cost-effective free-tier options for academic prototypes. 
+
+Key technical factors supporting the selection of AWS include:
+\begin{itemize}
+    \item \textbf{Deep Integration Ecosystem}: AWS services (S3, Lambda, API Gateway, RDS, Cognito, SNS, CloudWatch, IAM, VPC) feature native, API-level integration. IAM roles and security policies allow services to authorize inter-service requests securely without embedding hardcoded access keys in application source code.
+    \item \textbf{Serverless Maturity}: AWS Lambda and Amazon API Gateway offer mature execution environments with sub-second scaling, automatic concurrency management, and robust integration with VPC private subnets.
+    \item \textbf{Managed PostgreSQL Relational Engine}: Amazon RDS for PostgreSQL eliminates administrative database management by handling automated backups, point-in-time recovery, multi-AZ failover, and minor version patching.
+    \item \textbf{Enterprise-Grade Security Standards}: AWS complies with global standards including ISO 27001, SOC 1/2/3, and HIPAA, providing built-in AES-256 encryption at rest and TLS 1.3 encryption in transit.
+\end{itemize}
+
+\section{AWS Regional Architecture}
+The system deployment is anchored in the \texttt{us-east-1} (N. Virginia) AWS Region. The regional infrastructure distributes workloads across multiple independent Availability Zones (AZs). Each AZ comprises one or more discrete physical data centers with redundant power, networking, and connectivity.
+
+By deploying Amazon RDS in a Multi-AZ configuration across private subnets in \texttt{us-east-1a} and \texttt{us-east-1b}, and deploying AWS Lambda across both subnets, the system maintains continuous operation even if an entire physical data center experiences a local power or network outage.

@@ -1,0 +1,51 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Background and Context}
+Higher education institutions rely heavily on centralized information systems to manage administrative operations, academic schedules, student enrollments, faculty evaluations, assignment grading, attendance monitoring, and examination records. Traditional campus management software was historically deployed on dedicated, physical on-premises servers located within institution data centers. While on-premises deployments offered perimeter-level physical control, they introduced severe operational challenges, including high capital expenditure (CapEx) for hardware procurement, single points of failure during hardware degradation, inflexible capacity limits during registration peak periods, and heavy maintenance overhead for system administrators.
+
+Cloud computing has transformed institutional software engineering by replacing static physical hardware with elastic, programmable, and on-demand cloud infrastructure. Amazon Web Services (AWS) provides a comprehensive suite of cloud primitives--spanning storage, serverless compute, relational databases, identity management, notification routing, network isolation, and telemetry monitoring--enabling institutions to deploy high-availability, cost-effective campus management applications without purchasing or maintaining physical servers.
+
+\section{Problem Statement}
+Legacy institutional platforms struggle to maintain performance and consistency under fluctuating workload profiles. For instance, during enrollment registration windows or assignment submission deadlines, access requests surge by several orders of magnitude. Under an on-premises model, servers must be provisioned for peak load capacity, resulting in low average resource utilization (often below 15\%) during normal operational periods. Conversely, under-provisioned infrastructure experiences server crashes, database connection exhaustions, slow response times, and unhandled requests during peak demand.
+
+Furthermore, traditional web applications host monolithic backend services, database engines, file storage, and authentication on single virtual machines. This coupled architecture violates the principle of separation of concerns, exposes full server infrastructure to security threats, and makes disaster recovery and zero-downtime maintenance practically impossible.
+
+\section{Project Motivation}
+The motivation of this project is to design, implement, and validate a modern, full-stack, cloud-native \textbf{College Campus Management System} utilizing Amazon Web Services. The system is engineered to solve operational bottlenecks by leveraging cloud-native serverless and managed services:
+\begin{itemize}
+    \item \textbf{Elasticity and Availability}: Decoupling static asset delivery from backend API handling and database persistence to guarantee system responsiveness under variable load.
+    \item \textbf{Cost Optimization}: Adopting a serverless and managed cloud footprint (Amazon S3, AWS Lambda, Amazon API Gateway, Amazon RDS PostgreSQL) that eliminates the continuous idle running costs associated with always-on Amazon EC2 virtual machines.
+    \item \textbf{Security and Role Isolation}: Enforcing robust authentication and role-based access control (RBAC) across three distinct institutional roles—\textit{Student}, \textit{Faculty}, and \textit{Administrator}.
+    \item \textbf{Academic Workflow Automation}: Streamlining core institutional workflows including enrollment, daily attendance logging, assignment submission and grading, exam result publishing, broadcast announcements, and audit logging.
+\end{itemize}
+
+\section{Project Scope}
+The scope of this project encompasses the complete lifecycle of a cloud-based campus management solution:
+\begin{enumerate}
+    \item \textbf{Frontend Development}: Building a responsive Single Page Application (SPA) using React 18, TypeScript, Tailwind CSS, and Lucide icons, hosted via Amazon S3 Static Website Hosting.
+    \item \textbf{Backend Microservices API}: Developing 44 RESTful API endpoints using Node.js, Express, and Prisma ORM, deployed via AWS Lambda and exposed through Amazon API Gateway.
+    \item \textbf{Relational Database Architecture}: Designing a PostgreSQL database schema containing 17 models with foreign key cascades, unique indices, and transaction boundaries, managed by Amazon RDS for PostgreSQL.
+    \item \textbf{Cloud Service Integration}: Wiring Amazon Cognito for JWT authentication, Amazon SNS for notification publishing, Amazon CloudWatch for centralized logging, AWS IAM for least-privilege security, and Amazon VPC for private network isolation.
+    \item \textbf{System Verification}: Performing complete automated vitest integration testing, API route matrix validation, database constraint testing, and end-to-end user workflow execution.
+\end{enumerate}
+
+\section{Report Organization}
+The remainder of this report is structured as follows:
+Chapter~\ref{chap:cloud_overview} reviews core cloud computing paradigms and AWS design principles. 
+Chapter~\ref{chap:aws_overview} outlines the selection rationale for AWS. 
+Chapter~\ref{chap:aws_services} provides an exhaustive 13-aspect technical analysis of all 9 utilized AWS services and explains why Amazon EC2 was excluded. 
+Chapter~\ref{chap:system_requirements} defines functional and non-functional system requirements. 
+Chapter~\ref{chap:architecture} presents the cloud system architecture and communication topology. 
+Chapter~\ref{chap:database} details the PostgreSQL database schema and ER diagram. 
+Chapter~\ref{chap:implementation} documents service-by-service implementation. 
+Chapter~\ref{chap:integration} explains step-by-step inter-service workflows. 
+Chapter~\ref{chap:serverless} analyzes the serverless compute model. 
+Chapter~\ref{chap:security} covers cloud security and shared responsibility. 
+Chapter~\ref{chap:cost} details quantitative cost analysis. 
+Chapter~\ref{chap:deployment} outlines deployment procedures. 
+Chapter~\ref{chap:observations} presents empirical implementation observations. 
+Chapter~\ref{chap:testing} details automated and E2E test results. 
+Chapter~\ref{chap:results} compares local versus cloud performance. 
+Chapter~\ref{chap:limitations} discusses system limitations and future enhancements. 
+Chapter~\ref{chap:conclusion} concludes the report.

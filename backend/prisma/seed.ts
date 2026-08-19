@@ -29,12 +29,15 @@ async function main() {
   const passwordHash = await bcrypt.hash('password123', 10);
 
   const users = [
+    { email: 'admin@campus.edu', passwordHash, role: Role.ADMIN },
     { email: 'admin@campus.local', passwordHash, role: Role.ADMIN },
+    { email: 'faculty@campus.edu', passwordHash, role: Role.FACULTY },
     { email: 'faculty@campus.local', passwordHash, role: Role.FACULTY },
     { email: 'faculty2@campus.local', passwordHash, role: Role.FACULTY },
     { email: 'faculty3@campus.local', passwordHash, role: Role.FACULTY },
     { email: 'faculty4@campus.local', passwordHash, role: Role.FACULTY },
     { email: 'faculty5@campus.local', passwordHash, role: Role.FACULTY },
+    { email: 'student@campus.edu', passwordHash, role: Role.STUDENT },
     { email: 'student@campus.local', passwordHash, role: Role.STUDENT },
     ...Array.from({ length: 11 }).map((_, i) => ({
       email: `student${i + 2}@campus.local`,
@@ -42,6 +45,7 @@ async function main() {
       role: Role.STUDENT,
     })),
   ];
+
 
   const createdUsers = [];
   for (const u of users) {

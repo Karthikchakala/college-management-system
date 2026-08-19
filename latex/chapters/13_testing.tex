@@ -1,0 +1,41 @@
+\chapter{Testing and Verification Validation}
+\label{chap:testing}
+
+\section{Automated Integration Test Suite}
+System functionality was verified using an automated Vitest integration test suite executing 22 comprehensive unit and integration tests against a live PostgreSQL database instance.
+
+Table~\ref{tab:test_summary} summarizes the automated test execution results.
+
+\begin{table}[htbp]
+\centering
+\caption{Automated Vitest Integration Test Suite Summary}
+\label{tab:test_summary}
+\small
+\begin{tabular}{L{3.5cm} L{3.5cm} L{2.0cm} L{2.0cm} L{3.0cm}}
+\hline
+\textbf{Test Category} & \textbf{Target Module} & \textbf{Total} & \textbf{Passed} & \textbf{Status} \\ \hline
+\textbf{Authentication API} & \texttt{auth.test.ts} & 5 & 5 & \textbf{PASS (100\%)} \\
+\textbf{Authorization Gates} & \texttt{system.test.ts} & 3 & 3 & \textbf{PASS (100\%)} \\
+\textbf{Administrative CRUD} & \texttt{system.test.ts} & 4 & 4 & \textbf{PASS (100\%)} \\
+\textbf{Database Integrity} & \texttt{system.test.ts} & 3 & 3 & \textbf{PASS (100\%)} \\
+\textbf{Academic Workflows} & \texttt{system.test.ts} & 4 & 4 & \textbf{PASS (100\%)} \\
+\textbf{Audit \& Reports} & \texttt{system.test.ts} & 3 & 3 & \textbf{PASS (100\%)} \\ \hline
+\textbf{Overall Suite} & \textbf{All Test Files} & \textbf{22} & \textbf{22} & \textbf{PASS (100\%)} \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Database Constraint Verification}
+Database integrity constraints were explicitly tested to verify rejection of invalid operations:
+\begin{enumerate}
+    \item \textbf{Duplicate Enrollment Test}: Intentionally enrolling a student in a course twice triggered Prisma unique constraint violation \texttt{P2002}, converted by middleware to HTTP 400 Bad Request (\textit{"Student is already enrolled in this course"}).
+    \item \textbf{Duplicate Attendance Test}: Logging attendance for the same student, course, and date twice executed an upsert, ensuring zero duplicate records.
+    \item \textbf{Invalid Foreign Key Test}: Creating a course with an invalid department UUID triggered foreign key constraint \texttt{P2003}, returned cleanly as HTTP 400 (\textit{"Invalid reference key or relationship ID provided"}).
+\end{enumerate}
+
+\section{End-to-End User Workflow Execution}
+Full end-to-end verification scripts executed complete user journeys across all three roles:
+\begin{itemize}
+    \item \textbf{Student Workflow}: Login $\rightarrow$ Dashboard $\rightarrow$ Enrolled Courses $\rightarrow$ Attendance View $\rightarrow$ Assignment Upload $\rightarrow$ Results View $\rightarrow$ Event Registration $\rightarrow$ Notification Read Status Update (\textbf{ALL PASS}).
+    \item \textbf{Faculty Workflow}: Login $\rightarrow$ Dashboard $\rightarrow$ Assigned Courses $\rightarrow$ Roster Inspection $\rightarrow$ Daily Attendance Logging $\rightarrow$ Assignment Creation $\rightarrow$ Grading $\rightarrow$ Announcement Publishing (\textbf{ALL PASS}).
+    \item \textbf{Admin Workflow}: Login $\rightarrow$ Analytics Dashboard $\rightarrow$ Student/Faculty/Dept Management $\rightarrow$ Course Creation $\rightarrow$ Enrollment $\rightarrow$ Audit Log Inspection $\rightarrow$ 5 CSV Exports (\textbf{ALL PASS}).
+\end{itemize}

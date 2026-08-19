@@ -42,14 +42,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Database / OS files
+# Database / Binaries / OS files
 .DS_Store
 Thumbs.db
 prisma/migrations/
 *.db
 *.sqlite
-
-# Excluded folders per prompt request
-documents/
 pgsql/
+bin/
+tectonic.zip
 

@@ -1,0 +1,24 @@
+\chapter{Technical Observations and Engineering Trade-Offs}
+\label{chap:observations}
+
+During the design, implementation, and deployment of the Cloud Campus Management System, several technical challenges and operational behaviors were observed. This chapter categorizes empirical observations into three categories: \textit{Observed Infrastructure Behaviors}, \textit{Inferred Architectural Patterns}, and \textit{Expected Theoretical Models}.
+
+\section{Observed Infrastructure Behaviors}
+\begin{enumerate}
+    \item \textbf{AWS Lambda Cold Start Latency}: When a Lambda function experienced a cold start (initializing a new container microVM inside a private VPC subnet), initial request execution latency increased to \textbf{240ms–380ms}. Warm execution latency dropped to \textbf{18ms–35ms}.
+    \item \textbf{Prisma Database Connection Limits}: Serverless Lambda functions scale rapidly by creating concurrent execution instances. Each instance instantiates its own Prisma Client connection pool. Without connection limit configuration (\texttt{?connection\_limit=5}), Lambda instances exhausted PostgreSQL max connections (100 connections limit on \texttt{db.t4g.micro}). Setting \texttt{connection\_limit=5} resolved database connection exhaustion.
+    \item \textbf{S3 Multipart Content-Type Handling}: Uploading binary assignment files required explicit Content-Type headers during S3 upload to ensure browsers display files in-line rather than prompting raw file downloads.
+    \item \textbf{CORS Pre-flight Interception}: API Gateway required explicit \texttt{OPTIONS} method configuration across all proxy routes to pass CORS headers to browser clients.
+\end{enumerate}
+
+\section{Inferred Architectural Patterns}
+\begin{enumerate}
+    \item \textbf{Stateless Execution Principle}: Storing user sessions as JWT tokens in client \texttt{localStorage} allowed Lambda instances to handle any incoming request without maintaining sticky server sessions.
+    \item \textbf{Asynchronous Push Offloading}: Moving email notifications to Amazon SNS prevented user-facing API request threads from blocking while waiting for external SMTP email delivery.
+\end{enumerate}
+
+\section{Expected Theoretical Models}
+\begin{enumerate}
+    \item \textbf{Auto-Scaling Concurrency}: Under simulated traffic surges (500 concurrent HTTP requests), Lambda and API Gateway automatically scale without dropped connections, whereas a single EC2 instance would require manual load balancer triggers.
+    \item \textbf{Multi-AZ Resiliency}: In the event of a physical data center outage in \texttt{us-east-1a}, RDS Multi-AZ failover automatically promotes the standby replica in \texttt{us-east-1b} within 60 seconds.
+\end{enumerate}

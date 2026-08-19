@@ -753,6 +753,18 @@ export const exportReport = async (req: Request, res: Response, next: NextFuncti
         ]);
         break;
       }
+      case 'audit':
+      case 'logs': {
+        const data = await prisma.auditLog.findMany({ include: { user: true } });
+        csvContent = generateCsv(data, [
+          { label: 'Action', key: 'action' },
+          { label: 'Resource', key: 'resource' },
+          { label: 'Resource ID', key: 'resourceId' },
+          { label: 'User Email', key: 'user.email' },
+          { label: 'Timestamp', key: 'timestamp' },
+        ]);
+        break;
+      }
       default:
         throw new AppError(`Report type ${type} is not supported`, 400, 'UNSUPPORTED_REPORT');
     }
