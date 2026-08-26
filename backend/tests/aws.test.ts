@@ -1,5 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import request from 'supertest';
+import fs from 'fs';
+import path from 'path';
 import app from '../src/app';
 import { S3StorageService } from '../src/services/s3.service';
 import { LocalStorageService } from '../src/services/storage.service';
@@ -114,6 +116,31 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(res.body.userId).toBeUndefined();
       expect(res.body.role).toBeUndefined();
       expect(res.body.cognitoSub).toBeUndefined();
+    });
+  });
+
+  // 5. Non-Destructive Production Seed Audit
+  describe('Production Seed Safety Verification', () => {
+    it('should never contain destructive delete or truncate operations in production-seed.ts', () => {
+      const seedFilePath = path.join(__dirname, '..', 'prisma', 'production-seed.ts');
+      expect(fs.existsSync(seedFilePath)).toBe(true);
+
+      const content = fs.readFileSync(seedFilePath, 'utf-8');
+
+      // Strict assertions: No deleteMany, delete, truncate, or drop
+      expect(content).not.toContain('deleteMany');
+      expect(content).not.toContain('.delete(');
+      expect(content).not.toContain('truncate');
+      expect(content).not.toContain('DROP TABLE');
+      expect(content).not.toContain('DROP DATABASE');
+
+      // Assertions: Safe upsert operations used for core models
+      expect(content).toContain('prisma.department.upsert');
+      expect(content).toContain('prisma.user.upsert');
+      expect(content).toContain('prisma.faculty.upsert');
+      expect(content).toContain('prisma.student.upsert');
+      expect(content).toContain('prisma.course.upsert');
+      expect(content).toContain('prisma.enrollment.upsert');
     });
   });
 });

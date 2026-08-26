@@ -87,6 +87,10 @@ npm run prisma:status
 npm run prisma:deploy
 # (Equivalent to: node scripts/prisma-with-secrets.js migrate deploy)
 
+# 3. (Optional) Initialize baseline production data non-destructively:
+# Safe upsert only: never deletes or resets existing tables or records
+# npm run prisma:seed:prod
+
 # Create log directory
 sudo mkdir -p /var/log/cloudcampus
 sudo chown -R $USER:$USER /var/log/cloudcampus

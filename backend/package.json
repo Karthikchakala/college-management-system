@@ -14,7 +14,8 @@
     "prisma:cli": "node scripts/prisma-with-secrets.js",
     "prisma:studio": "prisma studio",
     "prisma:seed": "prisma db seed",
-    "prisma:seed:prod": "node scripts/prisma-with-secrets.js db seed",
+    "prisma:seed:production": "ts-node prisma/production-seed.ts",
+    "prisma:seed:prod": "node scripts/prisma-with-secrets.js seed:production",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"

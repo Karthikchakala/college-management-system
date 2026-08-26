@@ -69,11 +69,16 @@ async function main() {
     process.exit(1);
   }
 
-  try {
-    const databaseUrl = await resolveDatabaseUrl();
-    const prismaBin = 'npx';
+    let cmd = 'npx';
+    let cmdArgs;
 
-    const result = spawnSync(prismaBin, ['prisma', ...args], {
+    if (args[0] === 'seed:production' || args[0] === 'production-seed') {
+      cmdArgs = ['ts-node', 'prisma/production-seed.ts'];
+    } else {
+      cmdArgs = ['prisma', ...args];
+    }
+
+    const result = spawnSync(cmd, cmdArgs, {
       stdio: 'inherit',
       shell: true,
       env: {
