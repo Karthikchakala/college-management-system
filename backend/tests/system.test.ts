@@ -183,7 +183,7 @@ describe('System Relational & API Validation Integration Tests', () => {
           credits: 3,
           departmentId: '00000000-0000-0000-0000-000000000000', // Invalid UUID
         });
-      expect(res.status).toBe(500); // Standard foreign key violation handled by central handler
+      expect(res.status).toBe(400); // Foreign key violation correctly handled as 400 INVALID_REFERENCE
     });
 
     it('should allow enrolling a student and reject duplicate enrollment (Unique Constraint Check)', async () => {
