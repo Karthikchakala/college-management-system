@@ -47,6 +47,7 @@ async function main() {
       { email: 'admin@campus.local', role: Role.ADMIN },
       { email: 'faculty@campus.edu', role: Role.FACULTY },
       { email: 'faculty@campus.local', role: Role.FACULTY },
+      { email: 'karthikc11105@gmail.com', role: Role.STUDENT },
       { email: 'student@campus.edu', role: Role.STUDENT },
       { email: 'student@campus.local', role: Role.STUDENT },
     ];
@@ -114,7 +115,8 @@ async function main() {
     // 4. Student Profiles (Upsert using unique 'enrollmentNumber')
     const studentProfilesData = [
       {
-        email: 'student@campus.edu',
+        email: 'karthikc11105@gmail.com',
+        fallbackEmail: 'student@campus.edu',
         enrollmentNumber: 'STU001',
         firstName: 'Karthik',
         lastName: 'Chakala',
@@ -133,7 +135,7 @@ async function main() {
 
     const studentMap: Record<string, string> = {};
     for (const s of studentProfilesData) {
-      const userId = userMap[s.email];
+      const userId = userMap[s.email] || (s.fallbackEmail ? userMap[s.fallbackEmail] : undefined);
       const deptId = departmentMap[s.departmentCode];
       if (userId && deptId) {
         const student = await prisma.student.upsert({

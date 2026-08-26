@@ -1,12 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { exchangeCodeForTokens, refreshCognitoSession } from '../services/cognito';
 import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithCognitoCode: (code: string) => Promise<void>;
   loginWithCognitoToken: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -42,19 +45,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   };
 
-  const redirectByRole = (role: string) => {
+  const redirectByRole = useCallback((role: string) => {
     if (role === 'ADMIN') {
-      navigate('/admin/dashboard');
+      navigate('/admin/dashboard', { replace: true });
     } else if (role === 'FACULTY') {
-      navigate('/faculty/dashboard');
+      navigate('/faculty/dashboard', { replace: true });
     } else {
-      navigate('/student/dashboard');
+      navigate('/student/dashboard', { replace: true });
     }
-  };
+  }, [navigate]);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login', { replace: true });
+  }, [navigate]);
+
+  const loginWithCognitoCode = useCallback(async (code: string) => {
+    setLoading(true);
+    try {
+      // 1. Exchange authorization code with Cognito /oauth2/token
+      const tokens = await exchangeCodeForTokens(code);
+      localStorage.setItem('token', tokens.access_token);
+      if (tokens.id_token) {
+        localStorage.setItem('id_token', tokens.id_token);
+      }
+      if (tokens.refresh_token) {
+        localStorage.setItem('refresh_token', tokens.refresh_token);
+      }
+
+      // 2. Perform verified identity linking if id_token is available
+      if (tokens.id_token) {
+        try {
+          await api.post('/auth/cognito/link', { idToken: tokens.id_token });
+        } catch (linkErr) {
+          // Info log only - non-blocking if already linked
+          console.info('[AuthContext] Cognito account link verification checked');
+        }
+      }
+
+      // 3. Fetch application profile
+      const res = await api.get('/auth/profile');
+      if (res.data.success) {
+        const freshUser = handleProfileResponse(res.data.data);
+        setUser(freshUser);
+        localStorage.setItem('user', JSON.stringify(freshUser));
+        redirectByRole(freshUser.role);
+      } else {
+        throw new Error(res.data.message || 'Failed to load user profile');
+      }
+    } catch (error: any) {
+      console.error('[AuthContext] Cognito authorization code exchange failed:', error);
+      logout();
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, [logout, redirectByRole]);
+
+  const loginWithCognitoToken = useCallback(async (token: string) => {
+    setLoading(true);
+    try {
+      localStorage.setItem('token', token);
+      const res = await api.get('/auth/profile');
+      if (res.data.success) {
+        const freshUser = handleProfileResponse(res.data.data);
+        setUser(freshUser);
+        localStorage.setItem('user', JSON.stringify(freshUser));
+        redirectByRole(freshUser.role);
+      }
+    } catch (error: any) {
+      logout();
+      throw new Error(error.response?.data?.message || 'Cognito authentication failed.');
+    } finally {
+      setLoading(false);
+    }
+  }, [logout, redirectByRole]);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // Check for OAuth hash parameters from Cognito Hosted UI redirect
+      // 1. Check for Authorization Code parameter in query string (?code=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const authCode = urlParams.get('code');
+
+      if (authCode) {
+        // Clean URL cleanly without reload
+        window.history.replaceState(null, '', window.location.pathname);
+        try {
+          await loginWithCognitoCode(authCode);
+          return;
+        } catch (codeErr) {
+          console.error('[AuthContext] Automatic code exchange failed on startup:', codeErr);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 2. Check for Implicit Grant hash parameters if present (#access_token=...)
       const hash = window.location.hash;
       if (hash && (hash.includes('access_token=') || hash.includes('id_token='))) {
         const params = new URLSearchParams(hash.substring(1));
@@ -65,17 +155,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (token) {
           try {
             localStorage.setItem('token', token);
-            // Clear hash from URL cleanly
+            if (idToken) {
+              localStorage.setItem('id_token', idToken);
+            }
             window.history.replaceState(null, '', window.location.pathname);
 
-            // If an ID token is present, perform secure account linking
             if (idToken) {
               try {
                 await api.post('/auth/cognito/link', { idToken });
-              } catch (linkErr) {
-                // Info log if already linked or non-blocking
-                console.info('[AuthContext] Cognito linking status checked');
-              }
+              } catch (_) {}
             }
 
             const res = await api.get('/auth/profile');
@@ -88,12 +176,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               return;
             }
           } catch (error) {
-            console.error('[AuthContext] Cognito token verification failed:', error);
+            console.error('[AuthContext] Implicit token verification failed:', error);
             logout();
           }
         }
       }
 
+      // 3. Check for existing persisted session
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
 
@@ -106,16 +195,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(freshUser);
             localStorage.setItem('user', JSON.stringify(freshUser));
           }
-        } catch (error) {
-          console.error('[AuthContext] Session verification failed, logging out...', error);
-          logout();
+        } catch (error: any) {
+          // If 401, check if refresh token is available
+          const refreshToken = localStorage.getItem('refresh_token');
+          if (refreshToken) {
+            try {
+              const refreshed = await refreshCognitoSession(refreshToken);
+              localStorage.setItem('token', refreshed.access_token);
+              if (refreshed.id_token) localStorage.setItem('id_token', refreshed.id_token);
+              const res = await api.get('/auth/profile');
+              if (res.data.success) {
+                const freshUser = handleProfileResponse(res.data.data);
+                setUser(freshUser);
+                localStorage.setItem('user', JSON.stringify(freshUser));
+                setLoading(false);
+                return;
+              }
+            } catch (_) {
+              logout();
+            }
+          } else {
+            logout();
+          }
         }
       }
       setLoading(false);
     };
 
     initializeAuth();
-  }, []);
+  }, [loginWithCognitoCode, logout, redirectByRole]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -136,32 +244,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithCognitoToken = async (token: string) => {
-    setLoading(true);
-    try {
-      localStorage.setItem('token', token);
-      const res = await api.get('/auth/profile');
-      if (res.data.success) {
-        const freshUser = handleProfileResponse(res.data.data);
-        setUser(freshUser);
-        localStorage.setItem('user', JSON.stringify(freshUser));
-        redirectByRole(freshUser.role);
-      }
-    } catch (error: any) {
-      logout();
-      throw new Error(error.response?.data?.message || 'Cognito authentication failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/login');
-  };
-
   const refreshUser = async () => {
     try {
       const res = await api.get('/auth/profile');
@@ -176,7 +258,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithCognitoToken, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        loading,
+        login,
+        loginWithCognitoCode,
+        loginWithCognitoToken,
+        logout,
+        refreshUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
