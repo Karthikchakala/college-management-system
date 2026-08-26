@@ -106,7 +106,9 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       if (process.env.NODE_ENV === 'production') {
         console.log('[CloudCampus Server] Resolving database credentials from AWS Secrets Manager...');
-        await initDatabase();
+      }
+      await initDatabase();
+      if (process.env.NODE_ENV === 'production') {
         console.log('[CloudCampus Server] Database credentials resolved successfully.');
       }
 

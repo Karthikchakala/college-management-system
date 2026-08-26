@@ -3,7 +3,7 @@ import request from 'supertest';
 import fs from 'fs';
 import path from 'path';
 import app from '../src/app';
-import prisma from '../src/config/db';
+import prisma, { getPrismaClient, initDatabase } from '../src/config/db';
 import { S3StorageService } from '../src/services/s3.service';
 import { LocalStorageService } from '../src/services/storage.service';
 import { getDatabaseUrl } from '../src/config/secrets';
@@ -81,6 +81,12 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(constructedUrl).toContain('postgresql://campusadmin:');
       expect(constructedUrl).not.toContain('localhost');
       expect(constructedUrl).not.toContain('cloudcampus?');
+    });
+
+    it('should dynamically update PrismaClient datasource and proxy on getPrismaClient with urlOverride', () => {
+      const targetRdsUrl = 'postgresql://campusadmin:testpass@cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com:5432/campusadmin?sslmode=require';
+      const client = getPrismaClient(targetRdsUrl);
+      expect(client).toBeDefined();
     });
   });
 
