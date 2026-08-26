@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { buildCognitoLoginUrl } from '../services/cognito';
 
 export default function Login() {
+  console.log('[DEBUG] Login.tsx mounted', typeof window !== 'undefined' ? window.location.href : '');
+  console.log('[DEBUG] /login route rendered');
   const { user, login, loading: authLoading, authError } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

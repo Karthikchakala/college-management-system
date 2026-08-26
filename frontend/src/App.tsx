@@ -40,6 +40,7 @@ export default function App() {
       <NotificationProvider>
         <Routes>
           {/* Public Access Routes */}
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Student Routes */}

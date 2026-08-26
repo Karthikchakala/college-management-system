@@ -18,7 +18,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Track processed codes to prevent double-execution in React 18 StrictMode
+const processedCodes = new Set<string>();
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('[DEBUG] AuthContext mounted', window.location.pathname, window.location.search);
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(() => {
@@ -71,6 +76,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [navigate]);
 
   const loginWithCognitoCode = useCallback(async (code: string) => {
+    if (processedCodes.has(code)) {
+      console.info('[AuthContext] Code already processed or in-flight. Skipping duplicate exchange.');
+      return;
+    }
+    processedCodes.add(code);
+
     setLoading(true);
     setAuthError(null);
     sessionStorage.removeItem('cognito_auth_error');
