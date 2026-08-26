@@ -69,7 +69,9 @@ async function main() {
     process.exit(1);
   }
 
-    let cmd = 'npx';
+  try {
+    const databaseUrl = await resolveDatabaseUrl();
+    const cmd = 'npx';
     let cmdArgs;
 
     if (args[0] === 'seed:production' || args[0] === 'production-seed') {
