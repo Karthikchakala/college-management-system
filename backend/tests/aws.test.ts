@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import fs from 'fs';
 import path from 'path';
 import app from '../src/app';
+import prisma from '../src/config/db';
 import { S3StorageService } from '../src/services/s3.service';
 import { LocalStorageService } from '../src/services/storage.service';
 import { getDatabaseUrl } from '../src/config/secrets';
@@ -83,20 +84,22 @@ describe('AWS Services Unit & Integration Tests', () => {
     });
   });
 
-  // 4. Cognito Authentication Verification & API Test Gate
+  // 4. Cognito Authentication & Identity Mapping Tests
   describe('Cognito Service & Security Gates', () => {
-    it('should reject malformed or untrusted Cognito tokens', async () => {
-      await expect(cognitoService.verifyCognitoToken('invalid.jwt.token')).rejects.toThrow();
+    beforeEach(() => {
+      vi.restoreAllMocks();
     });
 
-    it('should reject requests with missing token (401)', async () => {
+    // 1. Missing token -> 401
+    it('1. should reject requests with missing token (401)', async () => {
       const res = await request(app).get('/api/test');
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);
       expect(res.body.code).toBe('UNAUTHORIZED');
     });
 
-    it('should reject requests with malformed Bearer token (401)', async () => {
+    // 2. Malformed token -> 401
+    it('2. should reject requests with malformed Bearer token (401)', async () => {
       const res = await request(app)
         .get('/api/test')
         .set('Authorization', 'Bearer not-a-valid-jwt');
@@ -105,7 +108,8 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(res.body.code).toBe('UNAUTHORIZED');
     });
 
-    it('should reject requests with invalid signature or expired token (401)', async () => {
+    // 3. Expired/Invalid token -> 401
+    it('3. should reject requests with invalid signature or expired token (401)', async () => {
       const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxNTE2MjM5MDIyfQ.invalid_sig';
       const res = await request(app)
         .get('/api/test')
@@ -115,26 +119,210 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(res.body.code).toBe('UNAUTHORIZED');
     });
 
-    it('should return sanitized response without internal user metadata on GET /api/test when authenticated', async () => {
-      const token = authService.generateToken({
-        userId: 'test-user-id-123',
-        email: 'test@campus.local',
-        role: 'ADMIN',
+    // 4. Valid Cognito access token with already-linked cognitoSub -> 200
+    it('4. should allow access when valid Cognito token is already linked to an active user profile (200)', async () => {
+      const mockSub = '8458d4b8-a071-70f2-068d-daa6d1caa912';
+
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: mockSub,
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        emailVerified: false,
+        tokenUse: 'access',
+        exp: Math.floor(Date.now() / 1000) + 3600,
       });
+
+      vi.spyOn(prisma.user, 'findUnique').mockResolvedValue({
+        id: 'user-uuid-linked-123',
+        email: 'admin@campus.edu',
+        role: 'ADMIN',
+        status: 'ACTIVE',
+        cognitoSub: mockSub,
+        passwordHash: 'hash',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any);
 
       const res = await request(app)
         .get('/api/test')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', 'Bearer mock-valid-access-token');
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
         success: true,
         message: 'Cognito authenticated test route verified',
       });
-      expect(res.body.user).toBeUndefined();
-      expect(res.body.userId).toBeUndefined();
-      expect(res.body.role).toBeUndefined();
-      expect(res.body.cognitoSub).toBeUndefined();
+    });
+
+    // 5. Valid Cognito access token with no linked profile -> 401
+    it('5. should reject access when valid Cognito access token has no active linked profile (401)', async () => {
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: 'unlinked-cognito-sub-999',
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        emailVerified: false,
+        tokenUse: 'access',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      });
+
+      vi.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+
+      const res = await request(app)
+        .get('/api/test')
+        .set('Authorization', 'Bearer mock-valid-unlinked-access-token');
+
+      expect(res.status).toBe(401);
+      expect(res.body.code).toBe('UNAUTHORIZED');
+      expect(res.body.message).toContain('does not have an active application profile');
+    });
+
+    // 6. Valid verified Cognito ID token + exactly one matching email -> secure linking succeeds (200)
+    it('6. should successfully link Cognito identity when valid ID token has verified email matching exactly one user', async () => {
+      const mockSub = '8458d4b8-a071-70f2-068d-daa6d1caa912';
+      const mockEmail = 'admin@campus.edu';
+
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: mockSub,
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        email: mockEmail,
+        emailVerified: true,
+        tokenUse: 'id',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      });
+
+      // No user has this sub yet
+      vi.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+
+      // Exactly 1 user matches email with cognitoSub null
+      vi.spyOn(prisma.user, 'findMany').mockResolvedValue([
+        {
+          id: 'user-admin-1',
+          email: mockEmail,
+          role: 'ADMIN',
+          status: 'ACTIVE',
+          cognitoSub: null,
+        } as any,
+      ]);
+
+      vi.spyOn(prisma.user, 'update').mockResolvedValue({
+        id: 'user-admin-1',
+        email: mockEmail,
+        role: 'ADMIN',
+        status: 'ACTIVE',
+        cognitoSub: mockSub,
+      } as any);
+
+      vi.spyOn(prisma.auditLog, 'create').mockResolvedValue({} as any);
+
+      const res = await request(app)
+        .post('/api/auth/cognito/link')
+        .send({ idToken: 'valid-mock-id-token' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toContain('successfully linked');
+      expect(res.body.data.email).toBe(mockEmail);
+    });
+
+    // 7. Duplicate email candidates -> linking rejected (409)
+    it('7. should reject account linking if multiple candidate user records exist with the same email (409)', async () => {
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: 'mock-sub-1',
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        email: 'duplicate@campus.edu',
+        emailVerified: true,
+        tokenUse: 'id',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      });
+
+      vi.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+      vi.spyOn(prisma.user, 'findMany').mockResolvedValue([
+        { id: '1', email: 'duplicate@campus.edu' } as any,
+        { id: '2', email: 'duplicate@campus.edu' } as any,
+      ]);
+
+      const res = await request(app)
+        .post('/api/auth/cognito/link')
+        .send({ idToken: 'valid-mock-id-token-duplicate' });
+
+      expect(res.status).toBe(409);
+      expect(res.body.code).toBe('AMBIGUOUS_USER_MATCH');
+    });
+
+    // 8. Unverified email -> linking rejected (403)
+    it('8. should reject account linking if Cognito email is unverified (403)', async () => {
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: 'mock-sub-1',
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        email: 'unverified@campus.edu',
+        emailVerified: false,
+        tokenUse: 'id',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      });
+
+      const res = await request(app)
+        .post('/api/auth/cognito/link')
+        .send({ idToken: 'mock-id-token-unverified' });
+
+      expect(res.status).toBe(403);
+      expect(res.body.code).toBe('EMAIL_NOT_VERIFIED');
+    });
+
+    // 9. Already-linked different cognitoSub -> linking rejected (409)
+    it('9. should reject account linking if target user record is already linked to a different Cognito identity (409)', async () => {
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockResolvedValue({
+        sub: 'new-sub-attempt',
+        iss: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL',
+        clientId: '3kv2vgpkklqtlpfom2t72dn29n',
+        email: 'already-linked@campus.edu',
+        emailVerified: true,
+        tokenUse: 'id',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      });
+
+      vi.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+      vi.spyOn(prisma.user, 'findMany').mockResolvedValue([
+        {
+          id: 'user-already-linked',
+          email: 'already-linked@campus.edu',
+          cognitoSub: 'original-existing-sub',
+          status: 'ACTIVE',
+        } as any,
+      ]);
+
+      const res = await request(app)
+        .post('/api/auth/cognito/link')
+        .send({ idToken: 'mock-id-token-different-sub' });
+
+      expect(res.status).toBe(409);
+      expect(res.body.code).toBe('ALREADY_LINKED');
+    });
+
+    // 10. In production, local JWT fallback is strictly rejected (401)
+    it('10. should reject local JWT in production environment (401)', async () => {
+      const origEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+
+      const localToken = authService.generateToken({
+        userId: 'test-user-id-123',
+        email: 'test@campus.local',
+        role: 'ADMIN',
+      });
+
+      vi.spyOn(cognitoService, 'verifyCognitoToken').mockRejectedValue(new Error('Invalid signature'));
+
+      const res = await request(app)
+        .get('/api/test')
+        .set('Authorization', `Bearer ${localToken}`);
+
+      process.env.NODE_ENV = origEnv;
+
+      expect(res.status).toBe(401);
+      expect(res.body.code).toBe('UNAUTHORIZED');
+      expect(res.body.message).toContain('Invalid, expired, or untrusted Cognito token');
     });
   });
 

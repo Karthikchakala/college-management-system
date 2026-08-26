@@ -67,6 +67,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.setItem('token', token);
             // Clear hash from URL cleanly
             window.history.replaceState(null, '', window.location.pathname);
+
+            // If an ID token is present, perform secure account linking
+            if (idToken) {
+              try {
+                await api.post('/auth/cognito/link', { idToken });
+              } catch (linkErr) {
+                // Info log if already linked or non-blocking
+                console.info('[AuthContext] Cognito linking status checked');
+              }
+            }
+
             const res = await api.get('/auth/profile');
             if (res.data.success) {
               const freshUser = handleProfileResponse(res.data.data);

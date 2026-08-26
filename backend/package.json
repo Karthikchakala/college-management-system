@@ -16,6 +16,7 @@
     "prisma:seed": "prisma db seed",
     "prisma:seed:production": "ts-node prisma/production-seed.ts",
     "prisma:seed:prod": "node scripts/prisma-with-secrets.js seed:production",
+    "cognito:link": "node scripts/link-cognito-user.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"

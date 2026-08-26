@@ -91,6 +91,10 @@ npm run prisma:deploy
 # Safe upsert only: never deletes or resets existing tables or records
 # npm run prisma:seed:prod
 
+# 4. (Optional) Manually link existing User profile to Cognito sub via CLI:
+# npm run cognito:link <user-email> <cognito-sub>
+# Example: npm run cognito:link admin@campus.edu 8458d4b8-a071-70f2-068d-daa6d1caa912
+
 # Create log directory
 sudo mkdir -p /var/log/cloudcampus
 sudo chown -R $USER:$USER /var/log/cloudcampus
