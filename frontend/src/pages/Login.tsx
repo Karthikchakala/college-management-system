@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { buildCognitoLoginUrl } from '../services/cognito';
 
 export default function Login() {
-  const { user, login, loading: authLoading } = useAuth();
+  const { user, login, loading: authLoading, authError } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -55,7 +55,8 @@ export default function Login() {
     }
   };
 
-  if (hasAuthCode || (authLoading && !loading)) {
+  // Show authenticating overlay during active code exchange
+  if (hasAuthCode && authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-900 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.15),rgba(255,255,255,0))] font-sans antialiased text-slate-200 px-4">
         <div className="w-full max-w-md p-8 bg-slate-950/60 backdrop-blur-md rounded-2xl border border-slate-800 shadow-2xl text-center space-y-4">
@@ -66,6 +67,8 @@ export default function Login() {
       </div>
     );
   }
+
+  const displayedError = error || authError;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-900 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.15),rgba(255,255,255,0))] font-sans antialiased text-slate-200 px-4">
@@ -84,9 +87,9 @@ export default function Login() {
         </div>
 
         {/* Error Alert panel */}
-        {error && (
+        {displayedError && (
           <div className="mb-6 p-4 rounded-xl bg-red-950/20 border border-red-800/40 text-red-400 text-xs font-semibold leading-normal">
-            ⚠️ {error}
+            ⚠️ {displayedError}
           </div>
         )}
 

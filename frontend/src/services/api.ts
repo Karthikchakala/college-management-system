@@ -27,8 +27,12 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token && !config.headers.Authorization) {
+      if (typeof config.headers.set === 'function') {
+        config.headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -55,7 +59,11 @@ api.interceptors.response.use(
           })
             .then((newToken) => {
               if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                if (typeof originalRequest.headers.set === 'function') {
+                  originalRequest.headers.set('Authorization', `Bearer ${newToken}`);
+                } else {
+                  originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                }
               }
               return api(originalRequest);
             })
@@ -66,6 +74,7 @@ api.interceptors.response.use(
         isRefreshing = true;
 
         try {
+          console.info('[API Interceptor] 401 encountered, refreshing Cognito access token...');
           const newTokens = await refreshCognitoSession(refreshToken);
           localStorage.setItem('token', newTokens.access_token);
           if (newTokens.id_token) {
@@ -76,7 +85,11 @@ api.interceptors.response.use(
           }
 
           if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
+            if (typeof originalRequest.headers.set === 'function') {
+              originalRequest.headers.set('Authorization', `Bearer ${newTokens.access_token}`);
+            } else {
+              originalRequest.headers['Authorization'] = `Bearer ${newTokens.access_token}`;
+            }
           }
 
           processQueue(null, newTokens.access_token);
@@ -91,10 +104,6 @@ api.interceptors.response.use(
         } finally {
           isRefreshing = false;
         }
-      } else {
-        localStorage.removeItem('token');
-        localStorage.removeItem('id_token');
-        localStorage.removeItem('user');
       }
     }
 
