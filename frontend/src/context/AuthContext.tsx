@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithCognitoToken: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -18,32 +19,79 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const handleProfileResponse = (userData: any): User => {
+    const rawUser = userData.user;
+    const role = rawUser.role;
+    let name = 'Admin User';
+    let profileId: string | undefined = undefined;
+
+    if (role === 'STUDENT' && rawUser.student) {
+      name = `${rawUser.student.firstName} ${rawUser.student.lastName}`;
+      profileId = rawUser.student.id;
+    } else if (role === 'FACULTY' && rawUser.faculty) {
+      name = `${rawUser.faculty.firstName} ${rawUser.faculty.lastName}`;
+      profileId = rawUser.faculty.id;
+    }
+
+    return {
+      id: rawUser.id,
+      email: rawUser.email,
+      role,
+      name,
+      profileId,
+    };
+  };
+
+  const redirectByRole = (role: string) => {
+    if (role === 'ADMIN') {
+      navigate('/admin/dashboard');
+    } else if (role === 'FACULTY') {
+      navigate('/faculty/dashboard');
+    } else {
+      navigate('/student/dashboard');
+    }
+  };
+
   useEffect(() => {
     const initializeAuth = async () => {
+      // Check for OAuth hash parameters from Cognito Hosted UI redirect
+      const hash = window.location.hash;
+      if (hash && (hash.includes('access_token=') || hash.includes('id_token='))) {
+        const params = new URLSearchParams(hash.substring(1));
+        const accessToken = params.get('access_token');
+        const idToken = params.get('id_token');
+        const token = accessToken || idToken;
+
+        if (token) {
+          try {
+            localStorage.setItem('token', token);
+            // Clear hash from URL cleanly
+            window.history.replaceState(null, '', window.location.pathname);
+            const res = await api.get('/auth/profile');
+            if (res.data.success) {
+              const freshUser = handleProfileResponse(res.data.data);
+              setUser(freshUser);
+              localStorage.setItem('user', JSON.stringify(freshUser));
+              redirectByRole(freshUser.role);
+              setLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.error('[AuthContext] Cognito token verification failed:', error);
+            logout();
+          }
+        }
+      }
+
       const token = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
 
       if (token && storedUser) {
         try {
           setUser(JSON.parse(storedUser));
-          // Proactively fetch updated profile from backend to ensure token is valid
           const res = await api.get('/auth/profile');
           if (res.data.success) {
-            const freshUser = {
-              id: res.data.data.user.id,
-              email: res.data.data.user.email,
-              role: res.data.data.user.role,
-              name: res.data.data.user.role === 'STUDENT'
-                ? `${res.data.data.user.student.firstName} ${res.data.data.user.student.lastName}`
-                : res.data.data.user.role === 'FACULTY'
-                ? `${res.data.data.user.faculty.firstName} ${res.data.data.user.faculty.lastName}`
-                : 'Admin User',
-              profileId: res.data.data.user.role === 'STUDENT'
-                ? res.data.data.user.student.id
-                : res.data.data.user.role === 'FACULTY'
-                ? res.data.data.user.faculty.id
-                : undefined,
-            };
+            const freshUser = handleProfileResponse(res.data.data);
             setUser(freshUser);
             localStorage.setItem('user', JSON.stringify(freshUser));
           }
@@ -67,19 +115,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(loggedUser));
         setUser(loggedUser);
-        
-        // Redirect based on role
-        if (loggedUser.role === 'ADMIN') {
-          navigate('/admin/dashboard');
-        } else if (loggedUser.role === 'FACULTY') {
-          navigate('/faculty/dashboard');
-        } else {
-          navigate('/student/dashboard');
-        }
+        redirectByRole(loggedUser.role);
       }
     } catch (error: any) {
       setUser(null);
       throw new Error(error.response?.data?.message || 'Login failed. Please check credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginWithCognitoToken = async (token: string) => {
+    setLoading(true);
+    try {
+      localStorage.setItem('token', token);
+      const res = await api.get('/auth/profile');
+      if (res.data.success) {
+        const freshUser = handleProfileResponse(res.data.data);
+        setUser(freshUser);
+        localStorage.setItem('user', JSON.stringify(freshUser));
+        redirectByRole(freshUser.role);
+      }
+    } catch (error: any) {
+      logout();
+      throw new Error(error.response?.data?.message || 'Cognito authentication failed.');
     } finally {
       setLoading(false);
     }
@@ -96,21 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await api.get('/auth/profile');
       if (res.data.success) {
-        const freshUser = {
-          id: res.data.data.user.id,
-          email: res.data.data.user.email,
-          role: res.data.data.user.role,
-          name: res.data.data.user.role === 'STUDENT'
-            ? `${res.data.data.user.student.firstName} ${res.data.data.user.student.lastName}`
-            : res.data.data.user.role === 'FACULTY'
-            ? `${res.data.data.user.faculty.firstName} ${res.data.data.user.faculty.lastName}`
-            : 'Admin User',
-          profileId: res.data.data.user.role === 'STUDENT'
-            ? res.data.data.user.student.id
-            : res.data.data.user.role === 'FACULTY'
-            ? res.data.data.user.faculty.id
-            : undefined,
-        };
+        const freshUser = handleProfileResponse(res.data.data);
         setUser(freshUser);
         localStorage.setItem('user', JSON.stringify(freshUser));
       }
@@ -120,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithCognitoToken, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

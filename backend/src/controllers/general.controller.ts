@@ -5,9 +5,16 @@ import { AppError } from '../middleware/error.middleware';
 
 export const getHealth = (req: Request, res: Response) => {
   return res.status(200).json({
-    success: true,
-    message: 'Backend service is healthy',
+    status: 'ok',
+    service: 'cloudcampus-backend',
     timestamp: new Date().toISOString(),
+  });
+};
+
+export const getTestProtected = (req: Request, res: Response) => {
+  return res.status(200).json({
+    success: true,
+    message: 'Cognito authenticated test route verified',
   });
 };
 

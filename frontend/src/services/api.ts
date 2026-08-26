@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Vite proxy maps this to http://localhost:5000/api
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
 });
 
 // Interceptor to inject Bearer JWT on every request

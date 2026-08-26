@@ -1,54 +1,66 @@
+# ==============================================================================
+# CloudCampus Root .gitignore
+# ==============================================================================
+
 # Dependencies
 node_modules/
 /.pnp
 .pnp.js
 
-# Testing
-coverage/
-
-# Production / Build
+# Production / Build outputs
 dist/
 build/
-.svelte-kit
-.next
-.nuxt
 out/
+.vite/
+.next/
+.nuxt/
+.svelte-kit/
 
-# IDEs / Editors
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.eslintcache
+# Testing & Coverage
+coverage/
+*.lcov
 
-# Local files & Uploads
+# Environment Variables & Secrets (NEVER COMMIT)
 .env
+.env.*
 backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# Local Uploads & Temporary Data
 backend/uploads/*
 !backend/uploads/.gitkeep
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+archive/
+../CloudCampus-Archive/
 
-# Logs
+# Log files
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Database / Binaries / OS files
+# IDEs & OS Files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.eslintcache
 .DS_Store
 Thumbs.db
-prisma/migrations/
-*.db
+
+# Database Binaries & Archives
 *.sqlite
+*.db
 pgsql/
 bin/
 tectonic.zip
-
+*.zip
