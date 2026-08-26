@@ -89,8 +89,27 @@ describe('AWS Services Unit & Integration Tests', () => {
       await expect(cognitoService.verifyCognitoToken('invalid.jwt.token')).rejects.toThrow();
     });
 
-    it('should reject unauthenticated access to /api/test', async () => {
+    it('should reject requests with missing token (401)', async () => {
       const res = await request(app).get('/api/test');
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe('UNAUTHORIZED');
+    });
+
+    it('should reject requests with malformed Bearer token (401)', async () => {
+      const res = await request(app)
+        .get('/api/test')
+        .set('Authorization', 'Bearer not-a-valid-jwt');
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe('UNAUTHORIZED');
+    });
+
+    it('should reject requests with invalid signature or expired token (401)', async () => {
+      const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxNTE2MjM5MDIyfQ.invalid_sig';
+      const res = await request(app)
+        .get('/api/test')
+        .set('Authorization', `Bearer ${expiredToken}`);
       expect(res.status).toBe(401);
       expect(res.body.success).toBe(false);
       expect(res.body.code).toBe('UNAUTHORIZED');
