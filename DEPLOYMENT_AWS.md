@@ -67,14 +67,14 @@ COGNITO_DOMAIN=https://us-east-1ic9huqjjl.auth.us-east-1.amazoncognito.com
 FRONTEND_URL=https://your-production-frontend-url.com
 EOF
 
-# Generate Prisma Client
-npx prisma generate
-
-# Apply migrations to RDS PostgreSQL safely
-npx prisma migrate deploy
-
 # Compile TypeScript
 npm run build
+
+# Check migration status using AWS Secrets Manager credentials
+npm run prisma:status
+
+# Apply migrations to RDS PostgreSQL safely using AWS Secrets Manager
+npm run prisma:deploy
 
 # Create log directory
 sudo mkdir -p /var/log/cloudcampus

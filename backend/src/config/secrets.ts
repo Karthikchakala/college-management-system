@@ -1,4 +1,7 @@
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 let cachedDatabaseUrl: string | null = null;
 
