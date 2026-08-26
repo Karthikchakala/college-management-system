@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { buildCognitoLoginUrl } from '../services/cognito';
 
 export default function Login() {
-  const { login, loading: authLoading } = useAuth();
+  const { user, login, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -12,6 +14,20 @@ export default function Login() {
 
   // Check if page loaded with authorization code from Cognito redirect
   const hasAuthCode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('code');
+
+  // If user is already authenticated, redirect to their role dashboard
+  useEffect(() => {
+    if (user && !authLoading) {
+      console.info('[Login] User already authenticated. Redirecting to role dashboard:', user.role);
+      if (user.role === 'ADMIN') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (user.role === 'FACULTY') {
+        navigate('/faculty/dashboard', { replace: true });
+      } else {
+        navigate('/student/dashboard', { replace: true });
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   const handleCognitoLogin = async () => {
     try {

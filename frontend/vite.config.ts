@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.VITE_BACKEND_URL || 'http://CloudCampus-ALB-1161527073.us-east-1.elb.amazonaws.com',
         changeOrigin: true,
       },
     },

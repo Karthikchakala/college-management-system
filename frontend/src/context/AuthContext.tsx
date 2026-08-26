@@ -46,6 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const redirectByRole = useCallback((role: string) => {
+    console.info('[AuthContext] Executing role-based navigation. Role:', role);
     if (role === 'ADMIN') {
       navigate('/admin/dashboard', { replace: true });
     } else if (role === 'FACULTY') {
@@ -56,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [navigate]);
 
   const logout = useCallback(() => {
+    console.info('[AuthContext] Logging out user and clearing local credentials');
     localStorage.removeItem('token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('refresh_token');
@@ -67,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithCognitoCode = useCallback(async (code: string) => {
     setLoading(true);
     try {
+      console.info('[AuthContext] Initiating token exchange for authorization code...');
       // 1. Exchange authorization code with Cognito /oauth2/token
       const tokens = await exchangeCodeForTokens(code);
       localStorage.setItem('token', tokens.access_token);
@@ -77,28 +80,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('refresh_token', tokens.refresh_token);
       }
 
+      console.info('[AuthContext] Tokens stored. Verifying account linking on backend...');
       // 2. Perform verified identity linking if id_token is available
       if (tokens.id_token) {
         try {
-          await api.post('/auth/cognito/link', { idToken: tokens.id_token });
-        } catch (linkErr) {
-          // Info log only - non-blocking if already linked
-          console.info('[AuthContext] Cognito account link verification checked');
+          const linkRes = await api.post('/auth/cognito/link', { idToken: tokens.id_token });
+          console.info('[AuthContext] Cognito account link response:', linkRes.data?.message || 'OK');
+        } catch (linkErr: any) {
+          console.info('[AuthContext] Cognito linking checked (already linked or non-blocking):', linkErr.response?.data?.message || linkErr.message);
         }
       }
 
+      console.info('[AuthContext] Fetching user profile from /auth/profile...');
       // 3. Fetch application profile
       const res = await api.get('/auth/profile');
       if (res.data.success) {
         const freshUser = handleProfileResponse(res.data.data);
+        console.info('[AuthContext] User profile resolved successfully. Email:', freshUser.email, 'Role:', freshUser.role);
         setUser(freshUser);
         localStorage.setItem('user', JSON.stringify(freshUser));
+        
+        // Clean URL query parameters cleanly
+        window.history.replaceState(null, '', window.location.pathname);
+
         redirectByRole(freshUser.role);
       } else {
         throw new Error(res.data.message || 'Failed to load user profile');
       }
     } catch (error: any) {
-      console.error('[AuthContext] Cognito authorization code exchange failed:', error);
+      console.error('[AuthContext] Cognito authentication flow failed:', error.message || error);
       logout();
       throw error;
     } finally {
@@ -132,13 +142,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const authCode = urlParams.get('code');
 
       if (authCode) {
-        // Clean URL cleanly without reload
-        window.history.replaceState(null, '', window.location.pathname);
+        console.info('[AuthContext] Callback authorization code detected in URL. Processing SSO login...');
         try {
           await loginWithCognitoCode(authCode);
           return;
-        } catch (codeErr) {
-          console.error('[AuthContext] Automatic code exchange failed on startup:', codeErr);
+        } catch (codeErr: any) {
+          console.error('[AuthContext] Automatic code exchange failed on startup:', codeErr.message || codeErr);
           setLoading(false);
           return;
         }
@@ -200,6 +209,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const refreshToken = localStorage.getItem('refresh_token');
           if (refreshToken) {
             try {
+              console.info('[AuthContext] Access token expired, attempting refresh using refresh_token...');
               const refreshed = await refreshCognitoSession(refreshToken);
               localStorage.setItem('token', refreshed.access_token);
               if (refreshed.id_token) localStorage.setItem('id_token', refreshed.id_token);

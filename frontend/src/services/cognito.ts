@@ -53,7 +53,7 @@ export interface CognitoTokens {
 }
 
 /**
- * Builds the Authorization URL with PKCE (response_type=code, scope=email+openid)
+ * Builds the Authorization URL with PKCE (response_type=code, scope=email openid)
  */
 export async function buildCognitoLoginUrl(): Promise<string> {
   const redirectUri = getCognitoRedirectUri();
@@ -61,9 +61,12 @@ export async function buildCognitoLoginUrl(): Promise<string> {
   // PKCE Generation
   const codeVerifier = generateRandomString(64);
   sessionStorage.setItem('cognito_code_verifier', codeVerifier);
+  localStorage.setItem('cognito_code_verifier_fallback', codeVerifier);
 
   const hashed = await sha256(codeVerifier);
   const codeChallenge = base64UrlEncode(hashed);
+
+  console.info('[Cognito Auth] Generating PKCE login URL with redirect URI:', redirectUri);
 
   const params = new URLSearchParams({
     client_id: COGNITO_CLIENT_ID,
@@ -82,7 +85,9 @@ export async function buildCognitoLoginUrl(): Promise<string> {
  */
 export async function exchangeCodeForTokens(code: string): Promise<CognitoTokens> {
   const redirectUri = getCognitoRedirectUri();
-  const codeVerifier = sessionStorage.getItem('cognito_code_verifier') || '';
+  const codeVerifier = sessionStorage.getItem('cognito_code_verifier') || localStorage.getItem('cognito_code_verifier_fallback') || '';
+
+  console.info('[Cognito Auth] Exchanging authorization code at token endpoint with redirect URI:', redirectUri);
 
   const bodyParams = new URLSearchParams({
     grant_type: 'authorization_code',
@@ -110,13 +115,16 @@ export async function exchangeCodeForTokens(code: string): Promise<CognitoTokens
       const json = JSON.parse(errorText);
       parsedError = json.error_description || json.error || errorText;
     } catch (_) {}
+    console.error('[Cognito Auth] Token exchange failed HTTP status:', response.status, 'Error:', parsedError);
     throw new Error(`Cognito token exchange failed (${response.status}): ${parsedError}`);
   }
 
   // Clear verifier after successful exchange
   sessionStorage.removeItem('cognito_code_verifier');
+  localStorage.removeItem('cognito_code_verifier_fallback');
 
   const tokens: CognitoTokens = await response.json();
+  console.info('[Cognito Auth] Token exchange succeeded successfully. Received tokens.');
   return tokens;
 }
 
