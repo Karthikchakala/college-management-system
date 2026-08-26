@@ -60,9 +60,9 @@ PORT=5000
 AWS_REGION=us-east-1
 AWS_SECRET_NAME=cloudcampus/rds
 AWS_S3_BUCKET=cloudcampus-511225358997
-COGNITO_USER_POOL_ID=us-east-1_lC9huqjL
+COGNITO_USER_POOL_ID=us-east-1_Ic9huqJjL
 COGNITO_CLIENT_ID=3kv2vgpkklqtlpfom2t72dn29n
-COGNITO_ISSUER=https://cognito-idp.us-east-1.amazonaws.com/us-east-1_lC9huqjL
+COGNITO_ISSUER=https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL
 COGNITO_DOMAIN=https://us-east-1ic9huqjjl.auth.us-east-1.amazoncognito.com
 FRONTEND_URL=https://your-production-frontend-url.com
 EOF
@@ -129,7 +129,7 @@ To route requests from **CloudCampus-API** to the EC2 backend:
    - Create an **HTTP Integration** pointing to your EC2 backend target: `http://<EC2_PUBLIC_OR_PRIVATE_IP>:5000`.
 4. Navigate to **Routes**:
    - **`GET /health`**: Attach the HTTP integration to `GET /health` (Authorization: None).
-   - **`ANY /{proxy+}`** (or `/api/{proxy+}`): Attach the HTTP integration with **Cognito Authorizer** (`CloudCampus-Web` / User Pool `us-east-1_lC9huqjL`).
+   - **`ANY /{proxy+}`** (or `/api/{proxy+}`): Attach the HTTP integration with **Cognito Authorizer** (`CloudCampus-Web` / User Pool `us-east-1_Ic9huqJjL`).
 5. Deploy to stage **`prod`**.
 
 ---

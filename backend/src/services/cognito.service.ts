@@ -19,7 +19,7 @@ export class CognitoAuthService {
   private expectedIssuer: string;
 
   constructor() {
-    this.userPoolId = process.env.COGNITO_USER_POOL_ID || 'us-east-1_lC9huqjL';
+    this.userPoolId = process.env.COGNITO_USER_POOL_ID || 'us-east-1_Ic9huqJjL';
     this.clientId = process.env.COGNITO_CLIENT_ID || '3kv2vgpkklqtlpfom2t72dn29n';
     this.expectedIssuer = process.env.COGNITO_ISSUER || `https://cognito-idp.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${this.userPoolId}`;
 
