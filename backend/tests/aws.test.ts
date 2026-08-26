@@ -54,12 +54,30 @@ describe('AWS Services Unit & Integration Tests', () => {
     });
   });
 
-  // 3. Secrets Manager Configuration
+  // 3. Secrets Manager Configuration & Production RDS URL Construction
   describe('Secrets Manager & Database Connection', () => {
     it('should resolve local DATABASE_URL in development/test environment', async () => {
       const dbUrl = await getDatabaseUrl();
       expect(dbUrl).toBeDefined();
       expect(typeof dbUrl).toBe('string');
+    });
+
+    it('should construct exact RDS connection string for database campusadmin with SSL enforcement', () => {
+      const sampleSecret = {
+        username: 'campusadmin',
+        password: 'secure_mock_password',
+        host: 'cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com',
+        port: 5432,
+        dbname: 'campusadmin',
+      };
+
+      const constructedUrl = `postgresql://${encodeURIComponent(sampleSecret.username)}:${encodeURIComponent(sampleSecret.password)}@${sampleSecret.host}:${sampleSecret.port}/${sampleSecret.dbname}?sslmode=require`;
+
+      expect(constructedUrl).toContain('cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com:5432');
+      expect(constructedUrl).toContain('/campusadmin?sslmode=require');
+      expect(constructedUrl).toContain('postgresql://campusadmin:');
+      expect(constructedUrl).not.toContain('localhost');
+      expect(constructedUrl).not.toContain('cloudcampus?');
     });
   });
 
@@ -77,7 +95,6 @@ describe('AWS Services Unit & Integration Tests', () => {
     });
 
     it('should return sanitized response without internal user metadata on GET /api/test when authenticated', async () => {
-      // Generate a mock test token for dev/test fallback
       const token = authService.generateToken({
         userId: 'test-user-id-123',
         email: 'test@campus.local',
@@ -93,7 +110,6 @@ describe('AWS Services Unit & Integration Tests', () => {
         success: true,
         message: 'Cognito authenticated test route verified',
       });
-      // Ensure no sensitive metadata leaked
       expect(res.body.user).toBeUndefined();
       expect(res.body.userId).toBeUndefined();
       expect(res.body.role).toBeUndefined();

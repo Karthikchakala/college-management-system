@@ -70,11 +70,22 @@ EOF
 # Compile TypeScript
 npm run build
 
-# Check migration status using AWS Secrets Manager credentials
-npm run prisma:status
+# ==============================================================================
+# Prisma Migration Procedure with AWS Secrets Manager
+# ==============================================================================
+# Why: Standalone Prisma CLI does not execute Express application startup code.
+# The wrapper `scripts/prisma-with-secrets.js` uses the attached EC2 IAM Role to:
+# 1. Fetch credentials from AWS Secrets Manager ("cloudcampus/rds")
+# 2. In-memory construct the SSL RDS URL (database: campusadmin, host: cloudcampus-db...rds.amazonaws.com)
+# 3. Safely pass DATABASE_URL into Prisma CLI without persisting passwords to .env or disk.
 
-# Apply migrations to RDS PostgreSQL safely using AWS Secrets Manager
+# 1. Inspect migration status against RDS PostgreSQL:
+npm run prisma:status
+# (Equivalent to: node scripts/prisma-with-secrets.js migrate status)
+
+# 2. Deploy pending migrations safely to RDS PostgreSQL:
 npm run prisma:deploy
+# (Equivalent to: node scripts/prisma-with-secrets.js migrate deploy)
 
 # Create log directory
 sudo mkdir -p /var/log/cloudcampus
