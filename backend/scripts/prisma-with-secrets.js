@@ -76,6 +76,8 @@ async function main() {
 
     if (args[0] === 'seed:production' || args[0] === 'production-seed') {
       cmdArgs = ['ts-node', 'prisma/production-seed.ts'];
+    } else if (args[0] === 'seed:cse' || args[0] === 'cse-seed') {
+      cmdArgs = ['ts-node', 'prisma/cse-seed.ts'];
     } else {
       cmdArgs = ['prisma', ...args];
     }
