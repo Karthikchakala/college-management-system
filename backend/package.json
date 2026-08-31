@@ -18,6 +18,7 @@
     "prisma:seed:prod": "node scripts/prisma-with-secrets.js seed:production",
     "cognito:link": "node scripts/link-cognito-user.js",
     "cognito:link:karthik": "node scripts/link-karthik-cognito.js",
+    "test:s3": "node scripts/test-s3-live.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"

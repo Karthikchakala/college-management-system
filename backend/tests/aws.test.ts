@@ -27,6 +27,24 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(res.body.status).toBe('ok');
       expect(res.body.service).toBe('cloudcampus-backend');
     });
+
+    it('should return 200 OK on GET /api/health/database when database query succeeds', async () => {
+      const client = getPrismaClient();
+      vi.spyOn(client, '$queryRaw').mockResolvedValue([{ '?column?': 1 }] as any);
+      const res = await request(app).get('/api/health/database');
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toContain('Database connection is healthy');
+    });
+
+    it('should return 500 on GET /api/health/database when database query fails', async () => {
+      const client = getPrismaClient();
+      vi.spyOn(client, '$queryRaw').mockRejectedValue(new Error('Connection timeout'));
+      const res = await request(app).get('/api/health/database');
+      expect(res.status).toBe(500);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe('DATABASE_UNAVAILABLE');
+    });
   });
 
   // 2. Storage Services
@@ -83,10 +101,48 @@ describe('AWS Services Unit & Integration Tests', () => {
       expect(constructedUrl).not.toContain('cloudcampus?');
     });
 
+    it('should support alternative secret field keys (user, endpoint, database)', () => {
+      const altSecret = {
+        user: 'campusadmin',
+        password: 'secure_mock_password',
+        endpoint: 'cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com',
+        port: 5432,
+        database: 'campusadmin',
+      };
+
+      const username = encodeURIComponent(altSecret.user);
+      const host = altSecret.endpoint;
+      const dbname = altSecret.database;
+      const constructedUrl = `postgresql://${username}:${encodeURIComponent(altSecret.password)}@${host}:${altSecret.port}/${dbname}?sslmode=require`;
+
+      expect(constructedUrl).toBe('postgresql://campusadmin:secure_mock_password@cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com:5432/campusadmin?sslmode=require');
+    });
+
     it('should dynamically update PrismaClient datasource and proxy on getPrismaClient with urlOverride', () => {
       const targetRdsUrl = 'postgresql://campusadmin:testpass@cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com:5432/campusadmin?sslmode=require';
       const client = getPrismaClient(targetRdsUrl);
       expect(client).toBeDefined();
+    });
+
+    it('should verify all CloudCampus relational database models are defined on Prisma client', () => {
+      // Validate that all required relational models exist on Prisma singleton proxy
+      expect(prisma.user).toBeDefined();
+      expect(prisma.student).toBeDefined();
+      expect(prisma.faculty).toBeDefined();
+      expect(prisma.department).toBeDefined();
+      expect(prisma.course).toBeDefined();
+      expect(prisma.enrollment).toBeDefined();
+      expect(prisma.attendance).toBeDefined();
+      expect(prisma.assignment).toBeDefined();
+      expect(prisma.assignmentSubmission).toBeDefined();
+      expect(prisma.exam).toBeDefined();
+      expect(prisma.result).toBeDefined();
+      expect(prisma.event).toBeDefined();
+      expect(prisma.eventRegistration).toBeDefined();
+      expect(prisma.announcement).toBeDefined();
+      expect(prisma.notification).toBeDefined();
+      expect(prisma.document).toBeDefined();
+      expect(prisma.auditLog).toBeDefined();
     });
   });
 

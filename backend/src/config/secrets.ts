@@ -53,18 +53,18 @@ export async function getDatabaseUrl(): Promise<string> {
 
     // Check if SecretString is JSON
     try {
-      const parsed: DatabaseCredentials = JSON.parse(response.SecretString);
+      const parsed: any = JSON.parse(response.SecretString);
       if (parsed.databaseUrl) {
         resolvedUrl = parsed.databaseUrl;
-      } else if (parsed.username && parsed.password && parsed.host) {
-        const username = encodeURIComponent(parsed.username);
+      } else if ((parsed.username || parsed.user) && parsed.password && (parsed.host || parsed.endpoint)) {
+        const username = encodeURIComponent(parsed.username || parsed.user || 'campusadmin');
         const password = encodeURIComponent(parsed.password);
-        const host = parsed.host;
+        const host = parsed.host || parsed.endpoint || 'cloudcampus-db.cgdikmcwmp0u.us-east-1.rds.amazonaws.com';
         const port = parsed.port || 5432;
-        const dbname = parsed.dbname || 'campusadmin';
+        const dbname = parsed.dbname || parsed.database || 'campusadmin';
         resolvedUrl = `postgresql://${username}:${password}@${host}:${port}/${dbname}?sslmode=require`;
       } else {
-        throw new Error('Secret JSON missing expected database connection fields');
+        throw new Error('Secret JSON missing expected database connection fields (username/user, password, host/endpoint)');
       }
     } catch (parseError: any) {
       // If not JSON, check if it's already a connection string

@@ -37,6 +37,29 @@ function base64UrlEncode(buffer: ArrayBuffer): string {
     .replace(/=+$/, '');
 }
 
+/**
+ * Safely decodes and parses the payload of a JWT without external libraries
+ */
+export function decodeJwtPayload(token: string): any {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (err) {
+    console.warn('[Cognito Auth] Failed to decode JWT payload:', err);
+    return null;
+  }
+}
+
 // SHA-256 hash for PKCE challenge
 async function sha256(plain: string): Promise<ArrayBuffer> {
   const encoder = new TextEncoder();
