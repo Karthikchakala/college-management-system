@@ -78,6 +78,8 @@ async function main() {
       cmdArgs = ['ts-node', 'prisma/production-seed.ts'];
     } else if (args[0] === 'seed:cse' || args[0] === 'cse-seed') {
       cmdArgs = ['ts-node', 'prisma/cse-seed.ts'];
+    } else if (args[0] === 'seed:academic' || args[0] === 'academic-seed') {
+      cmdArgs = ['ts-node', 'prisma/academic-seed.ts'];
     } else {
       cmdArgs = ['prisma', ...args];
     }

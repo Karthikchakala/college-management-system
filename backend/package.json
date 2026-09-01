@@ -17,6 +17,7 @@
     "prisma:seed:production": "ts-node prisma/production-seed.ts",
     "prisma:seed:prod": "node scripts/prisma-with-secrets.js seed:production",
     "prisma:seed:cse": "node scripts/prisma-with-secrets.js seed:cse",
+    "prisma:seed:academic": "node scripts/prisma-with-secrets.js seed:academic",
     "cognito:link": "node scripts/link-cognito-user.js",
     "cognito:link:karthik": "node scripts/link-karthik-cognito.js",
     "test:s3": "node scripts/test-s3-live.js",
