@@ -141,6 +141,15 @@ describe('Phase 3C — Step 4: Live Faculty Grading of Existing Student Submissi
     });
 
     // Mock Submission Queries
+    vi.spyOn(client.assignmentSubmission, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, assignment } = args.where;
+      const sub = submissionTable.find(s => s.id === id);
+      if (sub && (!assignment?.facultyId || sub.assignment.facultyId === assignment.facultyId)) {
+        return sub as any;
+      }
+      return null;
+    });
+
     vi.spyOn(client.assignmentSubmission, 'findMany').mockImplementation(async (args: any) => {
       let filtered = [...submissionTable];
       if (args?.where?.assignmentId) filtered = filtered.filter(s => s.assignmentId === args.where.assignmentId);

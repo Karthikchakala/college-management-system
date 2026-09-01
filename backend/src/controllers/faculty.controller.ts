@@ -353,6 +353,16 @@ export const gradeSubmission = async (req: Request, res: Response, next: NextFun
     const faculty = await prisma.faculty.findUnique({ where: { userId } });
     if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
 
+    const submission = await prisma.assignmentSubmission.findFirst({
+      where: {
+        id: submissionId,
+        assignment: {
+          facultyId: faculty.id,
+        },
+      },
+    });
+    if (!submission) throw new AppError('Unauthorized submission grading or submission not found', 403, 'FORBIDDEN');
+
     const updated = await prisma.assignmentSubmission.update({
       where: { id: submissionId },
       data: {
@@ -390,6 +400,17 @@ export const gradeSubmission = async (req: Request, res: Response, next: NextFun
 export const createExam = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { courseId, name, examDate, startTime, endTime, location, maxMarks } = req.body;
+    const userId = req.user?.userId;
+    const faculty = await prisma.faculty.findUnique({ where: { userId } });
+    if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
+
+    const course = await prisma.course.findFirst({
+      where: {
+        id: courseId,
+        facultyId: faculty.id,
+      },
+    });
+    if (!course) throw new AppError('Unauthorized course access or course not found', 403, 'FORBIDDEN');
 
     const exam = await prisma.exam.create({
       data: {
@@ -415,9 +436,19 @@ export const createExam = async (req: Request, res: Response, next: NextFunction
 export const enterResults = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { examId, results } = req.body;
+    const userId = req.user?.userId;
+    const faculty = await prisma.faculty.findUnique({ where: { userId } });
+    if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
 
-    const exam = await prisma.exam.findUnique({ where: { id: examId } });
-    if (!exam) throw new AppError('Exam not found', 404, 'NOT_FOUND');
+    const exam = await prisma.exam.findFirst({
+      where: {
+        id: examId,
+        course: {
+          facultyId: faculty.id,
+        },
+      },
+    });
+    if (!exam) throw new AppError('Unauthorized exam access or exam not found', 403, 'FORBIDDEN');
 
     const updatedResults = [];
 
@@ -463,6 +494,19 @@ export const enterResults = async (req: Request, res: Response, next: NextFuncti
 export const publishResults = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { examId } = req.body;
+    const userId = req.user?.userId;
+    const faculty = await prisma.faculty.findUnique({ where: { userId } });
+    if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
+
+    const exam = await prisma.exam.findFirst({
+      where: {
+        id: examId,
+        course: {
+          facultyId: faculty.id,
+        },
+      },
+    });
+    if (!exam) throw new AppError('Unauthorized exam access or exam not found', 403, 'FORBIDDEN');
 
     const updated = await prisma.result.updateMany({
       where: { examId },

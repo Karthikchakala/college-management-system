@@ -134,6 +134,15 @@ describe('Phase 3C — Step 6: Live Faculty Result Entry and Publication Test', 
       return null;
     });
 
+    vi.spyOn(client.exam, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, course } = args.where;
+      const targetExam = id === finalExamId ? actualFinalExam : id === midtermExamId ? actualMidtermExam : null;
+      if (targetExam && (!course?.facultyId || targetExam.course.facultyId === course.facultyId)) {
+        return targetExam as any;
+      }
+      return null;
+    });
+
     // Mock Transactional Upsert for Result Entry
     vi.spyOn(client, '$transaction').mockImplementation(async (callback: any) => {
       const tx = {

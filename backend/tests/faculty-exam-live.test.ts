@@ -107,6 +107,13 @@ describe('Phase 3C — Step 5: Live Faculty Exam Creation & Student Retrieval Te
       return null;
     });
 
+    // Mock Course Ownership Queries
+    vi.spyOn(client.course, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, facultyId } = args.where;
+      if (id === cse208CourseId && facultyId === deepakFacultyId) return actualCourseCSE208 as any;
+      return null;
+    });
+
     // Mock Enrollments
     vi.spyOn(client.enrollment, 'findMany').mockResolvedValue([
       { id: 'enr-cse208', studentId: karthikStudentId, courseId: cse208CourseId, status: 'ACTIVE', course: actualCourseCSE208 },
