@@ -500,6 +500,16 @@ export const createCourseAnnouncement = async (req: Request, res: Response, next
     const { title, content, courseId } = req.body;
     const userId = req.user?.userId || '';
 
+    if (courseId) {
+      const faculty = await prisma.faculty.findUnique({ where: { userId } });
+      if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
+
+      const course = await prisma.course.findFirst({
+        where: { id: courseId, facultyId: faculty.id },
+      });
+      if (!course) throw new AppError('Unauthorized course management or course not found', 403, 'FORBIDDEN');
+    }
+
     const announcement = await prisma.announcement.create({
       data: {
         title,

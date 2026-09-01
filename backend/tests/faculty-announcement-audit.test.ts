@@ -5,7 +5,7 @@ import { getPrismaClient } from '../src/config/db';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
-describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification Audit', () => {
+describe('Phase 4 — Security Remediation: Faculty Announcement Course Ownership', () => {
   const secret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
   const client = getPrismaClient();
 
@@ -17,6 +17,8 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
   const shaikUserId = crypto.randomUUID();
   const shaikFacultyId = crypto.randomUUID();
   const cse203CourseId = crypto.randomUUID();
+  const cse208CourseId = crypto.randomUUID();
+  const nonExistentCourseId = crypto.randomUUID();
   const announcementId = crypto.randomUUID();
 
   // Tokens
@@ -56,41 +58,47 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
     lastName: 'Gannamaneni',
   };
 
+  const actualFacultyShaik = {
+    id: shaikFacultyId,
+    userId: shaikUserId,
+    employeeId: 'FAC_CSE03',
+    firstName: 'Shaik',
+    lastName: 'Venkat',
+  };
+
   const actualCourseCSE203 = {
     id: cse203CourseId,
     code: 'CSE203',
     name: 'Operating Systems',
     credits: 4,
-    facultyId: deepakFacultyId,
+    facultyId: deepakFacultyId, // Owned by Deepak
+  };
+
+  const actualCourseCSE208 = {
+    id: cse208CourseId,
+    code: 'CSE208',
+    name: 'Cloud Computing',
+    credits: 3,
+    facultyId: shaikFacultyId, // Owned by Shaik
   };
 
   // State storage
-  const announcementTable: any[] = [
-    // Pre-existing Announcement from Step 7
-    {
-      id: crypto.randomUUID(),
-      title: 'Cloud Computing Final Exam Instructions',
-      content: 'Final examination instructions for Cloud Computing.',
-      type: 'ACADEMIC',
-      status: 'ACTIVE',
-      courseId: crypto.randomUUID(),
-      authorId: deepakUserId,
-      createdAt: new Date('2026-09-01T01:16:07.049Z'),
-      updatedAt: new Date('2026-09-01T01:16:07.049Z'),
-    },
-  ];
-
-  const notificationTable: any[] = [
-    { id: 'notif-1', userId: karthikUserId, title: 'Exam Results Published', message: 'Your results are out', type: 'EXAM', isRead: false },
-    { id: 'notif-2', userId: karthikUserId, title: 'Assignment Graded', message: 'Assignment 2 graded', type: 'ACADEMIC', isRead: false },
-    { id: 'notif-3', userId: karthikUserId, title: 'New Assignment Published', message: 'Assignment 2 published', type: 'ACADEMIC', isRead: false },
-  ];
+  const announcementTable: any[] = [];
 
   beforeAll(() => {
     // Mock Faculty Queries
     vi.spyOn(client.faculty, 'findUnique').mockImplementation(async (args: any) => {
       if (args.where.userId === deepakUserId) return actualFacultyDeepak as any;
+      if (args.where.userId === shaikUserId) return actualFacultyShaik as any;
       return null;
+    });
+
+    // Mock Course Ownership Queries
+    vi.spyOn(client.course, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, facultyId } = args.where;
+      if (id === cse203CourseId && facultyId === deepakFacultyId) return actualCourseCSE203 as any;
+      if (id === cse208CourseId && facultyId === shaikFacultyId) return actualCourseCSE208 as any;
+      return null; // Reject if not owned by faculty or course does not exist
     });
 
     // Mock Student Queries
@@ -119,32 +127,21 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
       return filtered as any;
     });
 
-    // Mock Notification Queries
-    vi.spyOn(client.notification, 'findMany').mockImplementation(async (args: any) => {
-      return notificationTable.filter(n => n.userId === args.where.userId) as any;
-    });
-
     // Mock Enrollments
     vi.spyOn(client.enrollment, 'findMany').mockResolvedValue([
       { id: 'enr-cse203', studentId: karthikStudentId, courseId: cse203CourseId, status: 'ACTIVE', course: actualCourseCSE203 },
     ] as any);
 
-    // Mock Counts
-    vi.spyOn(client.announcement, 'count').mockImplementation(async () => announcementTable.length);
-    vi.spyOn(client.notification, 'count').mockImplementation(async () => notificationTable.length);
-    vi.spyOn(client.user, 'count').mockResolvedValue(7);
-    vi.spyOn(client.student, 'count').mockResolvedValue(4);
-    vi.spyOn(client.faculty, 'count').mockResolvedValue(6);
-    vi.spyOn(client.course, 'count').mockResolvedValue(12);
-    vi.spyOn(client.enrollment, 'count').mockResolvedValue(15);
+    // Mock other dashboard models
     vi.spyOn(client.attendance, 'findMany').mockResolvedValue([]);
     vi.spyOn(client.exam, 'findMany').mockResolvedValue([]);
     vi.spyOn(client.assignment, 'findMany').mockResolvedValue([]);
     vi.spyOn(client.event, 'findMany').mockResolvedValue([]);
+    vi.spyOn(client.notification, 'findMany').mockResolvedValue([]);
   });
 
   // ----------------------------------------------------
-  // Test 1: Unauthenticated
+  // Test 1: Unauthenticated -> 401
   // ----------------------------------------------------
   it('1. should reject unauthenticated request with 401 Unauthorized', async () => {
     const res = await request(app)
@@ -157,7 +154,7 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
   });
 
   // ----------------------------------------------------
-  // Test 2: Student Token
+  // Test 2: Student Token -> 403
   // ----------------------------------------------------
   it('2. should reject student token with 403 Forbidden', async () => {
     const res = await request(app)
@@ -171,9 +168,9 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
   });
 
   // ----------------------------------------------------
-  // Test 3: Faculty Announcement Creation by Deepak for CSE203
+  // Test 3: Deepak token + CSE203 (Owned by Deepak) -> 201 Created
   // ----------------------------------------------------
-  it('3. should successfully create course announcement for CSE203 by Deepak (FAC_CSE01)', async () => {
+  it('3. should successfully create course announcement for CSE203 by Deepak (owner)', async () => {
     const payload = {
       courseId: cse203CourseId,
       title: 'Phase 4 Verification — Operating Systems Announcement',
@@ -196,30 +193,75 @@ describe('Phase 4 — Step 6: Live Faculty Announcement & Student Notification A
   });
 
   // ----------------------------------------------------
-  // Test 4: Direct RDS Verification
+  // Test 4: Shaik token + CSE203 (Owned by Deepak) -> 403 Forbidden
   // ----------------------------------------------------
-  it('4. should verify RDS state: announcement exists with correct title, authorId, courseId', async () => {
-    const found = announcementTable.find(a => a.id === announcementId);
-    expect(found).toBeDefined();
-    expect(found.title).toBe('Phase 4 Verification — Operating Systems Announcement');
-    expect(found.authorId).toBe(deepakUserId);
-    expect(found.courseId).toBe(cse203CourseId);
-    expect(found.type).toBe('ACADEMIC');
-    expect(found.status).toBe('ACTIVE');
+  it('4. should reject with 403 Forbidden when Shaik (FAC_CSE03) attempts to post announcement for Deepak course (CSE203)', async () => {
+    const payload = {
+      courseId: cse203CourseId,
+      title: 'Unauthorized Announcement',
+      content: 'Should be rejected',
+    };
+
+    const res = await request(app)
+      .post('/api/faculty/announcements')
+      .set('Authorization', `Bearer ${shaikFacultyToken}`)
+      .send(payload);
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
   });
 
   // ----------------------------------------------------
-  // Test 5: Student Dashboard Verification
+  // Test 5: Deepak token + CSE208 (Owned by Shaik) -> 403 Forbidden
   // ----------------------------------------------------
-  it('5. should surface the new announcement under announcements on Karthiks student dashboard', async () => {
+  it('5. should reject with 403 Forbidden when Deepak (FAC_CSE01) attempts to post announcement for Shaik course (CSE208)', async () => {
+    const payload = {
+      courseId: cse208CourseId,
+      title: 'Unauthorized Announcement',
+      content: 'Should be rejected',
+    };
+
+    const res = await request(app)
+      .post('/api/faculty/announcements')
+      .set('Authorization', `Bearer ${deepakFacultyToken}`)
+      .send(payload);
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
+  });
+
+  // ----------------------------------------------------
+  // Test 6: Non-existent course UUID -> 403 Forbidden
+  // ----------------------------------------------------
+  it('6. should reject with 403 Forbidden when faculty attempts to post announcement for non-existent course ID', async () => {
+    const payload = {
+      courseId: nonExistentCourseId,
+      title: 'Invalid Course Announcement',
+      content: 'Should be rejected',
+    };
+
+    const res = await request(app)
+      .post('/api/faculty/announcements')
+      .set('Authorization', `Bearer ${deepakFacultyToken}`)
+      .send(payload);
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
+  });
+
+  // ----------------------------------------------------
+  // Test 7: Student Dashboard Verification
+  // ----------------------------------------------------
+  it('7. should surface the announcement on Karthiks dashboard', async () => {
     const res = await request(app)
       .get('/api/student/dashboard')
       .set('Authorization', `Bearer ${karthikStudentToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.announcements.length).toBeGreaterThanOrEqual(1);
-
     const target = res.body.data.announcements.find((a: any) => a.title === 'Phase 4 Verification — Operating Systems Announcement');
     expect(target).toBeDefined();
   });

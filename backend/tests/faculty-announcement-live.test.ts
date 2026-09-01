@@ -66,6 +66,13 @@ describe('Phase 3C — Step 7: Live Faculty Course Announcement & Student Dashbo
       return null;
     });
 
+    // Mock Course Ownership Queries
+    vi.spyOn(client.course, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, facultyId } = args.where;
+      if (id === cse208CourseId && facultyId === deepakFacultyId) return actualCourseCSE208 as any;
+      return null;
+    });
+
     // Mock Student Queries
     vi.spyOn(client.student, 'findUnique').mockImplementation(async (args: any) => {
       if (args.where.userId === karthikUserId) return actualStudentKarthik as any;
