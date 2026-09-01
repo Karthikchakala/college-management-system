@@ -230,6 +230,15 @@ export const markAttendance = async (req: Request, res: Response, next: NextFunc
 export const getCourseAttendanceHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { courseId } = req.params;
+    const userId = req.user?.userId;
+
+    const faculty = await prisma.faculty.findUnique({ where: { userId } });
+    if (!faculty) throw new AppError('Faculty profile required', 404, 'NOT_FOUND');
+
+    const course = await prisma.course.findFirst({
+      where: { id: courseId, facultyId: faculty.id },
+    });
+    if (!course) throw new AppError('Unauthorized course access or course not found', 403, 'FORBIDDEN');
 
     const records = await prisma.attendance.findMany({
       where: { courseId },

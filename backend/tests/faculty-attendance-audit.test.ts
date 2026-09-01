@@ -18,6 +18,7 @@ describe('Phase 4 — Step 4: Live Faculty Attendance Retrieval & Authorization 
   const shaikFacultyId = crypto.randomUUID();
   const cse203CourseId = crypto.randomUUID();
   const cse204CourseId = crypto.randomUUID();
+  const nonExistentCourseId = crypto.randomUUID();
 
   // Tokens
   const deepakFacultyToken = jwt.sign(
@@ -74,6 +75,14 @@ describe('Phase 4 — Step 4: Live Faculty Attendance Retrieval & Authorization 
     facultyId: deepakFacultyId, // Owned by Deepak
   };
 
+  const actualCourseCSE204 = {
+    id: cse204CourseId,
+    code: 'CSE204',
+    name: 'Computer Networks',
+    credits: 4,
+    facultyId: shaikFacultyId, // Owned by Shaik
+  };
+
   // 6 Attendance Records for CSE203 (5 PRESENT, 1 ABSENT = 83.33%)
   const attendanceRecordsCSE203 = [
     { id: 'att-6', studentId: karthikStudentId, courseId: cse203CourseId, date: new Date('2026-09-02T00:00:00.000Z'), status: 'PRESENT', remarks: 'Phase 3C live API verification', student: actualStudentKarthik },
@@ -90,6 +99,14 @@ describe('Phase 4 — Step 4: Live Faculty Attendance Retrieval & Authorization 
       if (args.where.userId === deepakUserId) return actualFacultyDeepak as any;
       if (args.where.userId === shaikUserId) return actualFacultyShaik as any;
       return null;
+    });
+
+    // Mock Course Ownership Queries
+    vi.spyOn(client.course, 'findFirst').mockImplementation(async (args: any) => {
+      const { id, facultyId } = args.where;
+      if (id === cse203CourseId && facultyId === deepakFacultyId) return actualCourseCSE203 as any;
+      if (id === cse204CourseId && facultyId === shaikFacultyId) return actualCourseCSE204 as any;
+      return null; // Reject if faculty does not own course or course does not exist
     });
 
     // Mock Student Queries
@@ -135,7 +152,7 @@ describe('Phase 4 — Step 4: Live Faculty Attendance Retrieval & Authorization 
   });
 
   // ----------------------------------------------------
-  // Test 3: Correct Faculty (Deepak) Retrieves Attendance
+  // Test 3: Correct Faculty (Deepak) Retrieves Attendance for CSE203
   // ----------------------------------------------------
   it('3. should return 200 OK with all 6 attendance records for CSE203 when Deepak calls GET /api/faculty/attendance/:courseId', async () => {
     const res = await request(app)
@@ -159,30 +176,41 @@ describe('Phase 4 — Step 4: Live Faculty Attendance Retrieval & Authorization 
   });
 
   // ----------------------------------------------------
-  // Test 4: Verify Student Information in Records
+  // Test 4: Cross-Faculty Ownership Test (Shaik attempts to view Deepak's CSE203)
   // ----------------------------------------------------
-  it('4. should include student details (Karthik Chakala, STU001) in attendance records', async () => {
+  it('4. should reject with 403 Forbidden when Shaik (FAC_CSE03) attempts to retrieve attendance for CSE203 (owned by Deepak)', async () => {
     const res = await request(app)
       .get(`/api/faculty/attendance/${cse203CourseId}`)
-      .set('Authorization', `Bearer ${deepakFacultyToken}`);
+      .set('Authorization', `Bearer ${shaikFacultyToken}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.data[0].student).toBeDefined();
-    expect(res.body.data[0].student.firstName).toBe('Karthik');
-    expect(res.body.data[0].student.lastName).toBe('Chakala');
-    expect(res.body.data[0].student.enrollmentNumber).toBe('STU001');
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
   });
 
   // ----------------------------------------------------
-  // Test 5: Empty Course / Non-existent Course
+  // Test 5: Deepak attempts to view CSE204 (owned by Shaik)
   // ----------------------------------------------------
-  it('5. should return 200 OK with empty array if course has no attendance records', async () => {
+  it('5. should reject with 403 Forbidden when Deepak (FAC_CSE01) attempts to retrieve attendance for CSE204 (owned by Shaik)', async () => {
     const res = await request(app)
       .get(`/api/faculty/attendance/${cse204CourseId}`)
       .set('Authorization', `Bearer ${deepakFacultyToken}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(res.body.data).toEqual([]);
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
+  });
+
+  // ----------------------------------------------------
+  // Test 6: Non-existent / Invalid Course ID
+  // ----------------------------------------------------
+  it('6. should reject with 403 Forbidden when faculty attempts to query a non-existent course ID', async () => {
+    const res = await request(app)
+      .get(`/api/faculty/attendance/${nonExistentCourseId}`)
+      .set('Authorization', `Bearer ${deepakFacultyToken}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('FORBIDDEN');
   });
 });

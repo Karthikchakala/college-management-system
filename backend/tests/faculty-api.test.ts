@@ -195,6 +195,8 @@ describe('Phase 3A — Faculty API Discovery & Live Retrieval Tests', () => {
         { id: 'att-3', courseId: 'c-203', date: new Date('2026-08-22'), status: 'ABSENT', remarks: 'Medical leave', student: { firstName: 'Karthik', lastName: 'Chakala', enrollmentNumber: 'STU001' } },
       ];
 
+      vi.spyOn(prisma.faculty, 'findUnique').mockResolvedValue(mockDeepakFaculty as any);
+      vi.spyOn(prisma.course, 'findFirst').mockResolvedValue({ id: 'c-203', code: 'CSE203', facultyId: 'fac-deepak' } as any);
       vi.spyOn(prisma.attendance, 'findMany').mockResolvedValue(mockRecords as any);
 
       const res = await request(app)
