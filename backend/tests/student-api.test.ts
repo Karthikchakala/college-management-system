@@ -4,7 +4,7 @@ import app from '../src/app';
 import prisma from '../src/config/db';
 import jwt from 'jsonwebtoken';
 
-describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
+describe('Phase 2B — Live Student Academic Data Retrieval Tests', () => {
   const secret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
   const karthikStudentToken = jwt.sign(
     {
@@ -96,6 +96,114 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
     },
   ];
 
+  // 19 Attendance records (16 Present, 3 Absent = 84.21%)
+  const mockAttendanceRecords = [
+    // CSE203: 4 Present, 1 Absent
+    { courseId: 'c-203', status: 'PRESENT', date: new Date('2026-08-18') },
+    { courseId: 'c-203', status: 'PRESENT', date: new Date('2026-08-20') },
+    { courseId: 'c-203', status: 'ABSENT', remarks: 'Medical leave', date: new Date('2026-08-22') },
+    { courseId: 'c-203', status: 'PRESENT', date: new Date('2026-08-25') },
+    { courseId: 'c-203', status: 'PRESENT', date: new Date('2026-08-27') },
+    // CSE204: 5 Present, 0 Absent
+    { courseId: 'c-204', status: 'PRESENT', date: new Date('2026-08-17') },
+    { courseId: 'c-204', status: 'PRESENT', date: new Date('2026-08-19') },
+    { courseId: 'c-204', status: 'PRESENT', date: new Date('2026-08-21') },
+    { courseId: 'c-204', status: 'PRESENT', date: new Date('2026-08-24') },
+    { courseId: 'c-204', status: 'PRESENT', date: new Date('2026-08-26') },
+    // CSE207: 3 Present, 1 Absent
+    { courseId: 'c-207', status: 'PRESENT', date: new Date('2026-08-18') },
+    { courseId: 'c-207', status: 'PRESENT', date: new Date('2026-08-21') },
+    { courseId: 'c-207', status: 'ABSENT', remarks: 'Personal reason', date: new Date('2026-08-25') },
+    { courseId: 'c-207', status: 'PRESENT', date: new Date('2026-08-28') },
+    // CSE208: 4 Present, 1 Absent
+    { courseId: 'c-208', status: 'PRESENT', date: new Date('2026-08-17') },
+    { courseId: 'c-208', status: 'PRESENT', date: new Date('2026-08-20') },
+    { courseId: 'c-208', status: 'PRESENT', date: new Date('2026-08-24') },
+    { courseId: 'c-208', status: 'ABSENT', remarks: 'AWS Collegiate Workshop', date: new Date('2026-08-27') },
+    { courseId: 'c-208', status: 'PRESENT', date: new Date('2026-08-31') },
+  ];
+
+  // 3 Assignments (2 Pending, 1 Graded with S3 reference)
+  const mockAssignments = [
+    {
+      id: 'assign-os-1',
+      title: 'Assignment 1 — CPU Scheduling Algorithms',
+      description: 'Implement FCFS, SJF, and Round Robin scheduling simulation.',
+      dueDate: new Date('2026-09-15T23:59:59.000Z'),
+      points: 100,
+      courseId: 'c-203',
+      course: { code: 'CSE203', name: 'Operating Systems' },
+      submissions: [], // Pending
+    },
+    {
+      id: 'assign-cc-1',
+      title: 'Assignment 1 — Multi-Tier AWS Infrastructure',
+      description: 'Design and deploy a resilient multi-tier web architecture.',
+      dueDate: new Date('2026-08-28T23:59:59.000Z'),
+      points: 100,
+      courseId: 'c-208',
+      course: { code: 'CSE208', name: 'Cloud Computing' },
+      submissions: [
+        {
+          id: 'sub-cc-1',
+          assignmentId: 'assign-cc-1',
+          studentId: 'karthik-stu-id-001',
+          submissionDate: new Date('2026-08-27T18:45:00.000Z'),
+          fileUrl: 'https://cloudcampus-511225358997.s3.us-east-1.amazonaws.com/submissions/karthik_aws_infrastructure_report.pdf',
+          fileName: 'karthik_aws_infrastructure_report.pdf',
+          status: 'GRADED',
+          grade: 'A+',
+          feedback: 'Exceptional architecture diagrams, comprehensive security analysis, and clean Secrets Manager integration.',
+          gradedAt: new Date('2026-08-29T14:30:00.000Z'),
+        },
+      ],
+    },
+    {
+      id: 'assign-se-1',
+      title: 'Assignment 1 — Agile Software Development',
+      description: 'Create user stories, sprint backlogs, and burndown charts.',
+      dueDate: new Date('2026-09-20T23:59:59.000Z'),
+      points: 50,
+      courseId: 'c-207',
+      course: { code: 'CSE207', name: 'Software Engineering' },
+      submissions: [], // Pending
+    },
+  ];
+
+  // 1 Exam
+  const mockExams = [
+    {
+      id: 'exam-cc-1',
+      courseId: 'c-208',
+      name: 'Midterm Examination',
+      examDate: new Date('2026-08-25T09:30:00.000Z'),
+      startTime: '09:30 AM',
+      endTime: '12:30 PM',
+      location: 'Main Block - Examination Hall B',
+      maxMarks: 100,
+      status: 'COMPLETED',
+      course: { code: 'CSE208', name: 'Cloud Computing' },
+    },
+  ];
+
+  // 1 Published Result
+  const mockResults = [
+    {
+      id: 'res-cc-1',
+      examId: 'exam-cc-1',
+      studentId: 'karthik-stu-id-001',
+      marksObtained: 92.5,
+      grade: 'A',
+      status: 'PUBLISHED',
+      remarks: 'Outstanding performance in cloud architecture, security boundaries, and relational database migrations.',
+      exam: {
+        name: 'Midterm Examination',
+        maxMarks: 100,
+        course: { code: 'CSE208', name: 'Cloud Computing' },
+      },
+    },
+  ];
+
   // ----------------------------------------------------
   // 1. GET /api/student/dashboard
   // ----------------------------------------------------
@@ -116,11 +224,11 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.body.code).toBe('FORBIDDEN');
     });
 
-    it('Scenario B: should return 200 OK with full dashboard payload for Karthik', async () => {
+    it('Scenario B: should return 200 OK with real calculated 84.21% attendance and 2 pending assignments', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
       vi.spyOn(prisma.enrollment, 'findMany').mockResolvedValue(mockKarthikEnrollments as any);
-      vi.spyOn(prisma.attendance, 'findMany').mockResolvedValue([]);
-      vi.spyOn(prisma.assignment, 'findMany').mockResolvedValue([]);
+      vi.spyOn(prisma.attendance, 'findMany').mockResolvedValue(mockAttendanceRecords as any);
+      vi.spyOn(prisma.assignment, 'findMany').mockResolvedValue([mockAssignments[0], mockAssignments[2]] as any);
       vi.spyOn(prisma.exam, 'findMany').mockResolvedValue([]);
       vi.spyOn(prisma.event, 'findMany').mockResolvedValue([]);
       vi.spyOn(prisma.announcement, 'findMany').mockResolvedValue([]);
@@ -137,12 +245,8 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.body.data.profile.enrollmentNumber).toBe('STU001');
       expect(res.body.data.profile.department.code).toBe('CSE');
       expect(res.body.data.coursesCount).toBe(4);
-      expect(res.body.data.attendancePercentage).toBe(100);
-      expect(Array.isArray(res.body.data.pendingAssignments)).toBe(true);
-      expect(Array.isArray(res.body.data.upcomingExams)).toBe(true);
-      expect(Array.isArray(res.body.data.upcomingEvents)).toBe(true);
-      expect(Array.isArray(res.body.data.announcements)).toBe(true);
-      expect(Array.isArray(res.body.data.notifications)).toBe(true);
+      expect(res.body.data.attendancePercentage).toBe(84.21); // 16 / 19 = 84.21%
+      expect(res.body.data.pendingAssignments).toHaveLength(2);
     });
   });
 
@@ -162,7 +266,7 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('Scenario B: should return 200 OK with Karthiks enrolled CSE courses and instructors', async () => {
+    it('Scenario B: should return 200 OK with 4 enrolled courses and instructors', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
       vi.spyOn(prisma.enrollment, 'findMany').mockResolvedValue(mockKarthikEnrollments as any);
 
@@ -173,10 +277,10 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveLength(4);
-      const courseCodes = res.body.data.map((c: any) => c.code);
-      expect(courseCodes).toEqual(['CSE203', 'CSE204', 'CSE207', 'CSE208']);
-      expect(res.body.data[0].faculty.firstName).toBe('Deepak');
-      expect(res.body.data[1].faculty.firstName).toBe('Shaik');
+      const codes = res.body.data.map((c: any) => c.code);
+      expect(codes).toEqual(['CSE203', 'CSE204', 'CSE207', 'CSE208']);
+      expect(res.body.data.find((c: any) => c.code === 'CSE203').faculty.firstName).toBe('Deepak');
+      expect(res.body.data.find((c: any) => c.code === 'CSE208').faculty.firstName).toBe('Shaik');
     });
   });
 
@@ -196,10 +300,14 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('Scenario B: should return 200 OK with per-course attendance breakdown', async () => {
+    it('Scenario B: should return 200 OK with accurate attendance percentages per course', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
       vi.spyOn(prisma.enrollment, 'findMany').mockResolvedValue(mockKarthikEnrollments as any);
-      vi.spyOn(prisma.attendance, 'findMany').mockResolvedValue([]);
+
+      vi.spyOn(prisma.attendance, 'findMany').mockImplementation(async (args: any) => {
+        const courseId = args?.where?.courseId;
+        return mockAttendanceRecords.filter(r => r.courseId === courseId) as any;
+      });
 
       const res = await request(app)
         .get('/api/student/attendance')
@@ -208,9 +316,31 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveLength(4);
-      expect(res.body.data[0].courseCode).toBe('CSE203');
-      expect(res.body.data[0].percentage).toBe(100);
-      expect(res.body.data[0].records).toEqual([]);
+
+      // Verify individual course percentages
+      const c203 = res.body.data.find((a: any) => a.courseCode === 'CSE203');
+      expect(c203.present).toBe(4);
+      expect(c203.absent).toBe(1);
+      expect(c203.total).toBe(5);
+      expect(c203.percentage).toBe(80);
+
+      const c204 = res.body.data.find((a: any) => a.courseCode === 'CSE204');
+      expect(c204.present).toBe(5);
+      expect(c204.absent).toBe(0);
+      expect(c204.total).toBe(5);
+      expect(c204.percentage).toBe(100);
+
+      const c207 = res.body.data.find((a: any) => a.courseCode === 'CSE207');
+      expect(c207.present).toBe(3);
+      expect(c207.absent).toBe(1);
+      expect(c207.total).toBe(4);
+      expect(c207.percentage).toBe(75);
+
+      const c208 = res.body.data.find((a: any) => a.courseCode === 'CSE208');
+      expect(c208.present).toBe(4);
+      expect(c208.absent).toBe(1);
+      expect(c208.total).toBe(5);
+      expect(c208.percentage).toBe(80);
     });
   });
 
@@ -230,21 +360,10 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('Scenario B: should return 200 OK with assignments for enrolled courses', async () => {
+    it('Scenario B: should return 200 OK with all 3 assignments including S3 submission for CSE208', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
       vi.spyOn(prisma.enrollment, 'findMany').mockResolvedValue(mockKarthikEnrollments as any);
-      vi.spyOn(prisma.assignment, 'findMany').mockResolvedValue([
-        {
-          id: 'assign-os-1',
-          title: 'Assignment 1: Virtual Memory & Page Replacement',
-          description: 'Simulate LRU and FIFO page replacement algorithms.',
-          dueDate: new Date('2026-09-15T23:59:59.000Z'),
-          points: 100,
-          courseId: 'c-203',
-          course: { code: 'CSE203', name: 'Operating Systems' },
-          submissions: [],
-        },
-      ] as any);
+      vi.spyOn(prisma.assignment, 'findMany').mockResolvedValue(mockAssignments as any);
 
       const res = await request(app)
         .get('/api/student/assignments')
@@ -252,9 +371,16 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data).toHaveLength(1);
-      expect(res.body.data[0].course.code).toBe('CSE203');
-      expect(res.body.data[0].submissions).toEqual([]);
+      expect(res.body.data).toHaveLength(3);
+
+      const cse208Assign = res.body.data.find((a: any) => a.course.code === 'CSE208');
+      expect(cse208Assign.submissions).toHaveLength(1);
+      expect(cse208Assign.submissions[0].status).toBe('GRADED');
+      expect(cse208Assign.submissions[0].grade).toBe('A+');
+      expect(cse208Assign.submissions[0].fileUrl).toContain('cloudcampus-511225358997.s3.us-east-1.amazonaws.com');
+
+      const cse203Assign = res.body.data.find((a: any) => a.course.code === 'CSE203');
+      expect(cse203Assign.submissions).toHaveLength(0); // Pending
     });
   });
 
@@ -274,22 +400,10 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('Scenario B: should return 200 OK with scheduled exams for enrolled courses', async () => {
+    it('Scenario B: should return 200 OK with Midterm Examination for CSE208', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
       vi.spyOn(prisma.enrollment, 'findMany').mockResolvedValue(mockKarthikEnrollments as any);
-      vi.spyOn(prisma.exam, 'findMany').mockResolvedValue([
-        {
-          id: 'exam-cc-1',
-          name: 'Midterm Examination: Cloud Architecture',
-          examDate: new Date('2026-09-20T09:30:00.000Z'),
-          startTime: '09:30 AM',
-          endTime: '12:30 PM',
-          location: 'Hall B - Room 204',
-          maxMarks: 100,
-          status: 'SCHEDULED',
-          course: { code: 'CSE208', name: 'Cloud Computing' },
-        },
-      ] as any);
+      vi.spyOn(prisma.exam, 'findMany').mockResolvedValue(mockExams as any);
 
       const res = await request(app)
         .get('/api/student/exams')
@@ -298,7 +412,9 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveLength(1);
+      expect(res.body.data[0].name).toBe('Midterm Examination');
       expect(res.body.data[0].course.code).toBe('CSE208');
+      expect(res.body.data[0].status).toBe('COMPLETED');
     });
   });
 
@@ -318,22 +434,9 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(403);
     });
 
-    it('Scenario B: should return 200 OK with published examination results', async () => {
+    it('Scenario B: should return 200 OK with published 92.5/100 Grade A result for CSE208', async () => {
       vi.spyOn(prisma.student, 'findUnique').mockResolvedValue(mockKarthikStudent as any);
-      vi.spyOn(prisma.result, 'findMany').mockResolvedValue([
-        {
-          id: 'res-1',
-          marksObtained: 94,
-          grade: 'A+',
-          status: 'PUBLISHED',
-          remarks: 'Outstanding performance in Cloud Computing',
-          exam: {
-            name: 'Cloud Computing Midterm',
-            maxMarks: 100,
-            course: { code: 'CSE208', name: 'Cloud Computing' },
-          },
-        },
-      ] as any);
+      vi.spyOn(prisma.result, 'findMany').mockResolvedValue(mockResults as any);
 
       const res = await request(app)
         .get('/api/student/results')
@@ -342,7 +445,9 @@ describe('Phase 2 — Student API Retrieval & Authorization Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveLength(1);
-      expect(res.body.data[0].grade).toBe('A+');
+      expect(res.body.data[0].marksObtained).toBe(92.5);
+      expect(res.body.data[0].grade).toBe('A');
+      expect(res.body.data[0].status).toBe('PUBLISHED');
       expect(res.body.data[0].exam.course.code).toBe('CSE208');
     });
   });
