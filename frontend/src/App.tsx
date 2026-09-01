@@ -33,6 +33,7 @@ import AdminCourses from './pages/admin/Courses';
 import AdminEnrollments from './pages/admin/Enrollments';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
+import AdminMonitoring from './pages/admin/Monitoring';
 
 export default function App() {
   return (
@@ -93,6 +94,7 @@ export default function App() {
                 <DashboardLayout>
                   <Routes>
                     <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="monitoring" element={<AdminMonitoring />} />
                     <Route path="students" element={<AdminStudents />} />
                     <Route path="faculty" element={<AdminFaculty />} />
                     <Route path="departments" element={<AdminDepartments />} />

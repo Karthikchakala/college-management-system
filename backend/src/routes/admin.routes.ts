@@ -26,12 +26,30 @@ import {
   getDashboardStats,
   exportReport,
 } from '../controllers/admin.controller';
+import {
+  getMonitoringOverview,
+  getEC2Monitoring,
+  getApiGatewayMonitoring,
+  getLambdaMonitoring,
+  getRDSMonitoring,
+  getMonitoringLogs,
+  getAlarmsMonitoring,
+} from '../controllers/monitoring.controller';
 
 const router = Router();
 
 // Guard all admin routes with authentication and ADMIN role check
 router.use(authenticate);
 router.use(authorize(['ADMIN']));
+
+// CloudWatch System Monitoring Endpoints
+router.get('/monitoring/overview', getMonitoringOverview);
+router.get('/monitoring/ec2', getEC2Monitoring);
+router.get('/monitoring/api-gateway', getApiGatewayMonitoring);
+router.get('/monitoring/lambda', getLambdaMonitoring);
+router.get('/monitoring/rds', getRDSMonitoring);
+router.get('/monitoring/logs', getMonitoringLogs);
+router.get('/monitoring/alarms', getAlarmsMonitoring);
 
 // Student Management
 router.get('/students', getStudents);

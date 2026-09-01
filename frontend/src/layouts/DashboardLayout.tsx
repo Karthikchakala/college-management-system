@@ -20,6 +20,7 @@ import {
   Building,
   History,
   TrendingUp,
+  Activity,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = {
     ADMIN: [
       { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+      { label: 'System Monitoring', path: '/admin/monitoring', icon: Activity },
       { label: 'Students', path: '/admin/students', icon: Users },
       { label: 'Faculty', path: '/admin/faculty', icon: GraduationCap },
       { label: 'Departments', path: '/admin/departments', icon: Building },
