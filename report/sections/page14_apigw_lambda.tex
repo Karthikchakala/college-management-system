@@ -1,0 +1,35 @@
+\newpage
+\section{API Gateway and Serverless Health Probe}
+
+\subsection{Amazon API Gateway Architecture and Ingress Routing}
+CloudCampus utilizes **Amazon API Gateway** (HTTP API \texttt{7k2yo6gy77}, deployed to stage \texttt{prod}) as the single public HTTPS entry point for all backend services \cite{aws_apigw}. API Gateway manages CORS pre-flight (\texttt{OPTIONS}) handshakes and separates serverless diagnostics from stateful application routes:
+
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+    \item \textbf{Serverless Diagnostic Route} (\texttt{GET /health}): Directly integrated with AWS Lambda (\texttt{CloudCampus-Health-Function}) with \texttt{Authorization: None}.
+    \item \textbf{Application API Routes} (\texttt{ANY /api/\{proxy+\}}): Integrated with the EC2 backend server and protected by an attached **Amazon Cognito JWT Authorizer**.
+\end{itemize}
+
+\subsection{AWS Lambda Health Function \& Verified Terminal Evidence}
+The \texttt{CloudCampus-Health-Function} Lambda executes automated read validation on the private S3 data bucket \texttt{cloudcampus-511225358997} \cite{aws_lambda}. Listing~\ref{lst:live_apigw_verification} demonstrates live terminal output confirming that unauthenticated API requests are blocked with HTTP 401, while serverless health checks succeed with HTTP 200.
+
+\begin{lstlisting}[language=bash, caption={Live HTTPS Verification of API Gateway and Lambda Serverless Probe}, label={lst:live_apigw_verification}]
+# 1. Probe Serverless Health Endpoint (Lambda + S3 Integration)
+$ curl -i https://7k2yo6gy77.execute-api.us-east-1.amazonaws.com/prod/health
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Wed, 02 Sep 2026 18:07:45 GMT
+
+{"message":"Lambda successfully accessed S3",
+ "bucket":"cloudcampus-511225358997",
+ "object":"lambda-test.txt"}
+
+# 2. Probe Protected Application Route without JWT Bearer Token
+$ curl -i https://7k2yo6gy77.execute-api.us-east-1.amazonaws.com/prod/api/test
+
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+Date: Wed, 02 Sep 2026 18:07:51 GMT
+
+{"message":"Unauthorized"}
+\end{lstlisting}

@@ -1,0 +1,40 @@
+\newpage
+\section{Database Architecture --- Amazon RDS PostgreSQL}
+
+\subsection{Amazon RDS Configuration and Relational Models}
+CloudCampus uses \textbf{Amazon RDS for PostgreSQL} (instance \texttt{cloudcampus-db}, database \texttt{campusadmin}) hosted in a private VPC subnet \cite{aws_rds}. Relational entities and data access contracts are defined through Prisma ORM \cite{prisma_orm}. Database credentials (host, port, user, password, dbname) are dynamically resolved in-memory from AWS Secrets Manager at application startup without persistent storage on disk.
+
+\subsection{Relational Entity Architecture}
+Figure~\ref{fig:database_erd} illustrates the core academic schema entities and their relational integrity constraints.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.1cm, auto, >=stealth,
+    entity/.style={rectangle, draw=primaryblue, fill=blue!5, thick, text width=3.8cm, rounded corners=3pt, font=\scriptsize},
+    title/.style={font=\footnotesize\bfseries\color{primaryblue}},
+    link/.style={thick, color=primaryblue!80}]
+
+    % Core User & Academic Models
+    \node[entity] (user) {\textbf{User}\\ \hrule\vspace{1pt} id (UUID, PK)\\ email (Unique)\\ cognitoSub (Unique)\\ role (STUDENT/FACULTY/ADMIN)\\ status (ACTIVE/INACTIVE)};
+    
+    \node[entity, right=1.2cm of user] (department) {\textbf{Department}\\ \hrule\vspace{1pt} id (UUID, PK)\\ name (Unique)\\ code (CSE, ECE, ME)\\ status (ACTIVE)};
+
+    \node[entity, below=0.8cm of user] (student) {\textbf{Student}\\ \hrule\vspace{1pt} id (UUID, PK)\\ userId (FK $\rightarrow$ User)\\ departmentId (FK)\\ enrollmentNumber (Unique)\\ firstName, lastName};
+
+    \node[entity, below=0.8cm of department] (faculty) {\textbf{Faculty}\\ \hrule\vspace{1pt} id (UUID, PK)\\ userId (FK $\rightarrow$ User)\\ departmentId (FK)\\ employeeId (Unique)\\ designation};
+
+    \node[entity, below=0.8cm of student] (course) {\textbf{Course}\\ \hrule\vspace{1pt} id (UUID, PK)\\ code (e.g., CSE208)\\ name (Cloud Computing)\\ credits (Int)\\ departmentId, facultyId};
+
+    \node[entity, right=1.2cm of course] (academic_records) {\textbf{Academic Operations}\\ \hrule\vspace{1pt} $\bullet$ Enrollment (studentId, courseId)\\ $\bullet$ Attendance (date, status)\\ $\bullet$ Assignment \& Submission (S3 key)\\ $\bullet$ Exam \& Result (marks, grade)};
+
+    % Relations
+    \draw[link] (user.south) -- (student.north);
+    \draw[link] (user.east) -- (department.west);
+    \draw[link] (department.south) -- (faculty.north);
+    \draw[link] (student.south) -- (course.north);
+    \draw[link] (faculty.south) -- (academic_records.north);
+    \draw[link] (course.east) -- (academic_records.west);
+\end{tikzpicture}
+\caption{CloudCampus Relational Database Entity Model (Prisma Schema)}
+\label{fig:database_erd}
+\end{figure}

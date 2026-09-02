@@ -1,0 +1,30 @@
+\newpage
+\section{Introduction}
+
+\subsection{Background}
+Modern higher education institutions operate within dynamic, data-intensive environments where academic records, attendance logs, course syllabi, assignment submissions, examination schedules, and performance evaluations must be seamlessly managed across diverse stakeholder groups \cite{iiitdm_kurnool}. Transitioning institutional operations from legacy monolithic on-premise software to distributed cloud architectures enables high availability, automated resilience, and elastic scalability while drastically reducing physical infrastructure maintenance overhead \cite{aws_ec2}.
+
+\subsection{Problem Statement}
+Conventional campus management software architectures exhibit significant architectural and operational deficiencies:
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+    \item \textbf{Single-Point-of-Failure Risk}: Monolithic on-premise servers lack automated failover capabilities, leading to widespread downtime during peak registration or grading periods.
+    \item \textbf{Insecure Credential Persistence}: Hardcoding database credentials and secret keys within configuration files on local servers introduces severe data exposure risks.
+    \item \textbf{Unprotected File Access}: Storing academic submissions directly on public file systems or unauthenticated web servers compromises student privacy and data integrity.
+    \item \textbf{Lack of Real-Time Telemetry}: Administrators lack consolidated operational visibility into compute utilization, API latencies, database connection saturation, and security anomalies.
+\end{enumerate}
+
+\subsection{Motivation}
+The primary motivation behind developing \textbf{CloudCampus} is to leverage modern cloud design patterns on Amazon Web Services (AWS) to construct an enterprise-grade academic management system. By isolating compute from storage, managing identity through standardized OAuth 2.0 PKCE workflows, and dynamically resolving database secrets in process memory, the platform achieves robust security and operational stability.
+
+\subsection{Objectives}
+The core technical objectives established and executed in this project are:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+    \item \textbf{Deploy a Decoupled Multi-Tier AWS Architecture}: Implement static frontend hosting on Amazon S3, API ingress via Amazon API Gateway, compute on Amazon EC2, and relational data persistence on Amazon RDS PostgreSQL.
+    \item \textbf{Implement Cryptographic Identity Federation}: Integrate Amazon Cognito User Pools with Proof Key for Code Exchange (PKCE) and JWKS token verification.
+    \item \textbf{Enforce Strict Least-Privilege Data Storage}: Utilize an encrypted private Amazon S3 bucket with 100\% Block Public Access for student submissions using temporary presigned URLs.
+    \item \textbf{Implement Keyless In-Memory Secrets Resolution}: Eliminate static database credentials from disk using AWS Secrets Manager and EC2 IAM Roles.
+    \item \textbf{Establish Comprehensive Observability}: Ingest system metrics and logs into Amazon CloudWatch, exposing real-time infrastructure telemetry to administrators.
+\end{itemize}
+
+\subsection{Scope}
+The scope of CloudCampus encompasses three institutional roles: Students, Faculty, and Administrators. It spans course enrollment, attendance tracking, assignment distribution and submission, examination scheduling, result publication, event announcements, system audit logging, and automated health monitoring across AWS region \texttt{us-east-1}.

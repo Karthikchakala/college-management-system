@@ -1,0 +1,59 @@
+\newpage
+\section{Cloud Computing Architecture}
+
+\subsection{Architectural Design Principles}
+The CloudCampus platform is designed according to the AWS Well-Architected Framework principles, emphasizing security, reliability, performance efficiency, and operational excellence \cite{aws_s3, aws_ec2}. The infrastructure decouples static asset delivery from backend computation and database storage, ensuring that frontend responsiveness is independent of application server workloads.
+
+\subsection{Physical AWS Cloud Topography}
+The complete deployed infrastructure in AWS Region \texttt{us-east-1} is illustrated in Figure~\ref{fig:aws_detailed_architecture}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.2cm, auto, >=stealth,
+    cloud/.style={draw=primaryblue!80, fill=blue!5, thick, rounded corners=8pt, inner sep=10pt},
+    service/.style={rectangle, draw=primaryblue, fill=white, thick, text width=3.2cm, align=center, rounded corners=4pt, minimum height=1.1cm, font=\footnotesize\bfseries},
+    storage/.style={cylinder, draw=secondarygreen!80, fill=green!5, shape border rotate=90, aspect=0.25, thick, text width=3.0cm, align=center, minimum height=1.1cm, font=\footnotesize\bfseries},
+    lambda/.style={rectangle, draw=amber!90, fill=amber!10, thick, text width=3.0cm, align=center, rounded corners=4pt, minimum height=1.0cm, font=\footnotesize\bfseries},
+    arrow/.style={thick, ->, >=stealth, color=primaryblue},
+    darrow/.style={thick, <->, >=stealth, color=secondarygreen}]
+
+    % Users
+    \node[service, fill=primaryblue!10] (users) {\textbf{End Users}\\ \scriptsize(Browser / Mobile)};
+
+    % Frontend S3
+    \node[service, below=0.8cm of users, xshift=-3.4cm] (s3_frontend) {\textbf{Amazon S3 Frontend}\\ \scriptsize\texttt{cloudcampus-frontend-production}\\(Static Website Hosting)};
+
+    % Cognito
+    \node[service, below=0.8cm of users, xshift=3.4cm] (cognito) {\textbf{Amazon Cognito}\\ \scriptsize User Pool: \texttt{us-east-1\_Ic9huqJjL}\\(OAuth 2.0 PKCE / JWT)};
+
+    % API Gateway
+    \node[service, below=1.0cm of users] (apigw) {\textbf{Amazon API Gateway}\\ \scriptsize HTTP API: \texttt{7k2yo6gy77}\\(Stage: \texttt{prod})};
+
+    % Lambda Health
+    \node[lambda, below=0.9cm of apigw, xshift=-4.0cm] (lambda) {\textbf{AWS Lambda}\\ \scriptsize\texttt{CloudCampus-Health-Function}\\(S3 Health Probe)};
+
+    % EC2 Compute
+    \node[service, below=0.9cm of apigw, xshift=1.2cm, text width=4.5cm] (ec2) {\textbf{Amazon EC2 Compute}\\ \scriptsize\texttt{CloudCampus-EC2} (Port 5000)\\Role: \texttt{CloudCampus-EC2-Role}};
+
+    % Data Tier
+    \node[storage, below=1.1cm of ec2, xshift=-3.5cm] (s3_data) {\textbf{Amazon S3 Data}\\ \scriptsize\texttt{cloudcampus-511225358997}\\(100\% Block Public Access)};
+    \node[storage, below=1.1cm of ec2] (rds) {\textbf{Amazon RDS PostgreSQL}\\ \scriptsize\texttt{cloudcampus-db} (\texttt{campusadmin})\\(Private Subnet)};
+    \node[service, below=1.1cm of ec2, xshift=3.5cm, text width=2.8cm] (secrets) {\textbf{AWS Secrets Manager}\\ \scriptsize\texttt{cloudcampus/rds}\\(In-Memory Resolution)};
+    \node[service, right=0.6cm of ec2, text width=2.6cm] (cw) {\textbf{Amazon CloudWatch}\\ \scriptsize Logs, Metrics \& Alarms};
+
+    % Connections
+    \draw[arrow] (users) -| node[above, font=\tiny\bfseries, near start] {HTTP (Port 80)} (s3_frontend);
+    \draw[darrow] (users) -| node[above, font=\tiny\bfseries, near start] {OAuth SSO} (cognito);
+    \draw[arrow] (users) -- node[right, font=\tiny\bfseries] {HTTPS API Calls} (apigw);
+    \draw[arrow] (s3_frontend) |- (apigw);
+    \draw[arrow] (apigw.south) -| node[above, font=\tiny\bfseries] {\texttt{GET /health}} (lambda.north);
+    \draw[arrow] (apigw.south) -- node[right, font=\tiny\bfseries] {\texttt{ANY /api/*} (Bearer JWT)} (ec2.north);
+    \draw[darrow] (lambda) -- (s3_data);
+    \draw[darrow] (ec2.south) -| (s3_data.north);
+    \draw[darrow] (ec2.south) -- (rds.north);
+    \draw[arrow] (ec2.south) -| (secrets.north);
+    \draw[arrow] (ec2.east) -- (cw.west);
+\end{tikzpicture}
+\caption{Detailed CloudCampus AWS Production Deployment Topology in \texttt{us-east-1}}
+\label{fig:aws_detailed_architecture}
+\end{figure}

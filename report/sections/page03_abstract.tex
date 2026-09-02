@@ -1,0 +1,29 @@
+\newpage
+\thispagestyle{plain}
+
+\begin{center}
+{\LARGE \bfseries \color{primaryblue} ABSTRACT}\\[0.6cm]
+\end{center}
+
+\noindent Educational institutions require reliable, secure, and scalable digital management systems to handle multi-faceted academic operations across students, faculty, and administrative staff. Traditional on-premise campus management infrastructures often suffer from single-point-of-failure vulnerabilities, rigid scaling limitations, and insecure credential handling. 
+
+This project presents \textbf{CloudCampus} --- a comprehensive, production-grade College Campus Management System architected and deployed on \textbf{Amazon Web Services (AWS)} in region \texttt{us-east-1}. CloudCampus implements a decoupled, multi-tier cloud computing architecture that strictly separates static frontend edge hosting, identity federation, API ingress routing, compute execution, relational data storage, and private object archiving.
+
+\vspace{0.3cm}
+\noindent The key technical and architectural components implemented and verified in this work comprise:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Static Frontend Edge Tier}: A modern single-page application (SPA) built with React 18, Vite 5, TypeScript, and TailwindCSS, deployed to \textbf{Amazon S3 Static Website Hosting} (\texttt{cloudcampus-frontend-production}) with custom error routing rules for client-side navigation.
+    \item \textbf{Identity Federation \& Authentication}: \textbf{Amazon Cognito} User Pool (\texttt{us-east-1\_Ic9huqJjL}) and App Client (\texttt{3kv2vgpkklqtlpfom2t72dn29n}) implementing OAuth 2.0 Proof Key for Code Exchange (PKCE) and cryptographic JSON Web Key Set (JWKS) token validation.
+    \item \textbf{API Ingress \& Authorization}: \textbf{Amazon API Gateway} (\texttt{7k2yo6gy77}) providing managed HTTPS ingress with Cognito JWT authorizer enforcement across protected API routes.
+    \item \textbf{Compute Tier}: \textbf{Amazon EC2} (\texttt{CloudCampus-EC2}) executing a Node.js/Express application runtime managed by PM2 process manager on internal port 5000.
+    \item \textbf{Relational Database Tier}: \textbf{Amazon RDS for PostgreSQL} (\texttt{cloudcampus-db}, database \texttt{campusadmin}) managed through Prisma ORM with dynamic credentials resolution from \textbf{AWS Secrets Manager} (\texttt{cloudcampus/rds}) without plaintext credentials on disk.
+    \item \textbf{Encrypted Private Storage}: \textbf{Amazon S3} (\texttt{cloudcampus-511225358997}) with 100\% Block Public Access enabled, serving student assignments and submissions via time-limited (15-minute) presigned URLs.
+    \item \textbf{Serverless Diagnostic Probe}: \textbf{AWS Lambda} (\texttt{CloudCampus-Health-Function}) validating S3 data accessibility via the public \texttt{GET /health} endpoint.
+    \item \textbf{Cloud Observability}: \textbf{Amazon CloudWatch} logging (\texttt{/aws/ec2/cloudcampus-backend}) and real-time metric telemetry powering an administrative system monitoring dashboard.
+\end{itemize}
+
+\vspace{0.3cm}
+\noindent System verification was conducted through 19 test suites encompassing 166 automated test passes, live browser validation of Cognito SSO flows, role-based authorization guards (401/403 negative testing), and zero-data-loss verification of foundational CSE curriculum records (\texttt{CSE201}--\texttt{CSE208}).
+
+\vspace{0.6cm}
+\noindent \textbf{\color{primaryblue}Keywords:} Cloud Computing, Amazon Web Services (AWS), Amazon S3 Website Hosting, Amazon Cognito, OAuth 2.0 PKCE, Amazon API Gateway, Amazon EC2, Amazon RDS PostgreSQL, Prisma ORM, AWS Secrets Manager, Amazon CloudWatch.
