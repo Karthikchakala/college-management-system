@@ -10,12 +10,15 @@ export default function StudentCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await api.get('/student/dashboard'); // dashboard returns enrolled courses
+        const res = await api.get('/student/courses');
         if (res.data.success) {
-          setCourses(res.data.data.enrolledCourses);
+          const courseList = Array.isArray(res.data.data)
+            ? res.data.data
+            : (res.data.data?.courses || []);
+          setCourses(courseList);
         }
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load enrolled courses', err);
       } finally {
         setLoading(false);
       }

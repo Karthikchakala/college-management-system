@@ -52,7 +52,7 @@ export default function AdminReports() {
               </div>
               <button
                 disabled={downloading !== null}
-                onClick={() => handleDownload('students_roster', '/admin/reports/students')}
+                onClick={() => handleDownload('students_roster', '/admin/reports/export/students')}
                 className="py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition flex items-center gap-1"
               >
                 <Download className="w-3.5 h-3.5 text-slate-400" />
@@ -67,7 +67,7 @@ export default function AdminReports() {
               </div>
               <button
                 disabled={downloading !== null}
-                onClick={() => handleDownload('faculty_roster', '/admin/reports/faculty')}
+                onClick={() => handleDownload('faculty_roster', '/admin/reports/export/faculty')}
                 className="py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition flex items-center gap-1"
               >
                 <Download className="w-3.5 h-3.5 text-slate-400" />
@@ -92,7 +92,7 @@ export default function AdminReports() {
               </div>
               <button
                 disabled={downloading !== null}
-                onClick={() => handleDownload('attendance_log', '/admin/reports/attendance')}
+                onClick={() => handleDownload('attendance_log', '/admin/reports/export/attendance')}
                 className="py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition flex items-center gap-1"
               >
                 <Download className="w-3.5 h-3.5 text-slate-400" />
@@ -107,7 +107,7 @@ export default function AdminReports() {
               </div>
               <button
                 disabled={downloading !== null}
-                onClick={() => handleDownload('system_audit_logs', '/admin/reports/logs')}
+                onClick={() => handleDownload('system_audit_logs', '/admin/reports/export/logs')}
                 className="py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 transition flex items-center gap-1"
               >
                 <Download className="w-3.5 h-3.5 text-slate-400" />

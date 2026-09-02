@@ -94,10 +94,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const tokens = await exchangeCodeForTokens(code);
       console.info('[AuthContext] 3. Code exchange succeeded');
 
-      // Store tokens synchronously
-      localStorage.setItem('token', tokens.access_token);
+      // Store tokens synchronously (prioritize id_token for API calls to carry verified email & group claims)
+      const primaryToken = tokens.id_token || tokens.access_token;
+      localStorage.setItem('token', primaryToken);
       if (tokens.id_token) {
         localStorage.setItem('id_token', tokens.id_token);
+      }
+      if (tokens.access_token) {
+        localStorage.setItem('access_token', tokens.access_token);
       }
       if (tokens.refresh_token) {
         localStorage.setItem('refresh_token', tokens.refresh_token);
@@ -107,31 +111,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const idPayload = tokens.id_token ? decodeJwtPayload(tokens.id_token) : null;
       const accessPayload = decodeJwtPayload(tokens.access_token);
 
-      const email = idPayload?.email || accessPayload?.username || 'karthikc11105@gmail.com';
+      const email = idPayload?.email || accessPayload?.username || 'user@campus.local';
       let name = idPayload?.name || '';
       if (!name) {
         if (idPayload?.given_name) {
           name = `${idPayload.given_name} ${idPayload.family_name || ''}`.trim();
-        } else if (email === 'karthikc11105@gmail.com') {
-          name = 'Karthik Chakala';
-        } else {
+        } else if (email.includes('@')) {
           name = email.split('@')[0];
+        } else {
+          name = 'CloudCampus User';
         }
       }
 
+      // Extract role from custom:role or cognito:groups
       let role = 'STUDENT';
+      const groups: string[] = [
+        ...(Array.isArray(idPayload?.['cognito:groups']) ? idPayload['cognito:groups'] : []),
+        ...(Array.isArray(accessPayload?.['cognito:groups']) ? accessPayload['cognito:groups'] : []),
+      ];
+
       if (idPayload?.['custom:role']) {
         role = idPayload['custom:role'].toUpperCase();
       } else if (accessPayload?.['custom:role']) {
         role = accessPayload['custom:role'].toUpperCase();
-      } else if (idPayload?.['cognito:groups']?.includes('ADMIN')) {
+      } else if (groups.includes('ADMIN')) {
         role = 'ADMIN';
-      } else if (idPayload?.['cognito:groups']?.includes('FACULTY')) {
+      } else if (groups.includes('FACULTY')) {
         role = 'FACULTY';
+      } else if (groups.includes('STUDENT')) {
+        role = 'STUDENT';
       }
 
-      const profileId = idPayload?.['custom:enrollment'] || idPayload?.['custom:profileId'] || 'STU001';
-      const userId = idPayload?.sub || accessPayload?.sub || 'user-cognito-karthik';
+      const profileId = idPayload?.['custom:enrollment'] || idPayload?.['custom:profileId'] || (role === 'FACULTY' ? 'FAC001' : role === 'ADMIN' ? 'ADM001' : 'STU001');
+      const userId = idPayload?.sub || accessPayload?.sub || 'user-cognito-id';
 
       let freshUser: User = {
         id: userId,

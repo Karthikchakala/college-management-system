@@ -40,21 +40,22 @@ export default function FacultyAssignments() {
 
   const fetchCoursesAndAssignments = async () => {
     try {
-      const [coursesRes, assignmentsRes] = await Promise.all([
-        api.get('/faculty/courses'),
-        api.get('/student/assignments'), // reuse assignment search logic
-      ]);
-      if (coursesRes.data.success) {
-        setCourses(coursesRes.data.data);
-        if (coursesRes.data.data.length > 0 && !selectedCourseId) {
-          setSelectedCourseId(coursesRes.data.data[0].id);
+      const res = await api.get('/faculty/courses');
+      if (res.data.success) {
+        const courseList = res.data.data || [];
+        setCourses(courseList);
+        if (courseList.length > 0 && !selectedCourseId) {
+          setSelectedCourseId(courseList[0].id);
+        }
+        const allAssignments = courseList.flatMap((c: any) => c.assignments || []);
+        setAssignments(allAssignments);
+        if (allAssignments.length > 0 && !selectedAssignment) {
+          setSelectedAssignment(allAssignments[0]);
+          await fetchSubmissions(allAssignments[0].id);
         }
       }
-      if (assignmentsRes.data.success) {
-        setAssignments(assignmentsRes.data.data);
-      }
     } catch (err) {
-      console.error('Failed to load courses', err);
+      console.error('Failed to load courses and assignments', err);
     } finally {
       setLoading(false);
     }

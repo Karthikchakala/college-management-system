@@ -10,13 +10,12 @@ export default function AdminFaculty() {
   useEffect(() => {
     const fetchFaculty = async () => {
       try {
-        const res = await api.get('/admin/reports/faculty'); // Fetch via reports or normal routes
-        if (res.data) {
-          // Parse CSV or load via standard route if available. Let's load via standard admin route first:
-          const normalRes = await api.get('/admin/faculty');
-          if (normalRes.data.success) {
-            setFaculty(normalRes.data.data);
-          }
+        const res = await api.get('/admin/faculty');
+        if (res.data.success) {
+          const facultyList = Array.isArray(res.data.data)
+            ? res.data.data
+            : (res.data.data?.faculty || []);
+          setFaculty(facultyList);
         }
       } catch (err) {
         console.error('Failed to load faculty', err);

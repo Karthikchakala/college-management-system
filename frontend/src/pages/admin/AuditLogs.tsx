@@ -23,7 +23,10 @@ export default function AdminAuditLogs() {
       try {
         const res = await api.get('/admin/audit-logs');
         if (res.data.success) {
-          setLogs(res.data.data);
+          const logList = Array.isArray(res.data.data)
+            ? res.data.data
+            : (res.data.data?.logs || []);
+          setLogs(logList);
         }
       } catch (err) {
         console.error('Failed to load audit logs', err);

@@ -19,18 +19,20 @@ export default function AdminEnrollments() {
 
   const fetchPortalData = async () => {
     try {
-      const [coursesRes, studentsRes, enrollRes] = await Promise.all([
+      const [coursesRes, studentsRes] = await Promise.all([
         api.get('/admin/courses'),
         api.get('/admin/students'),
-        api.get('/admin/reports/attendance'), // using reports or fetching log context. Let's do standard:
       ]);
       if (coursesRes.data.success) {
         setCourses(coursesRes.data.data);
         if (coursesRes.data.data.length > 0) setCourseId(coursesRes.data.data[0].id);
       }
       if (studentsRes.data.success) {
-        setStudents(studentsRes.data.data);
-        if (studentsRes.data.data.length > 0) setStudentId(studentsRes.data.data[0].id);
+        const studentList = Array.isArray(studentsRes.data.data)
+          ? studentsRes.data.data
+          : (studentsRes.data.data?.students || []);
+        setStudents(studentList);
+        if (studentList.length > 0) setStudentId(studentList[0].id);
       }
     } catch (err) {
       console.error('Failed to load catalog data', err);

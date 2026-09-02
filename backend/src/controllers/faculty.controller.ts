@@ -130,7 +130,12 @@ export const getAssignedCourses = async (req: Request, res: Response, next: Next
 
     const courses = await prisma.course.findMany({
       where: { facultyId: faculty.id },
-      include: { department: true },
+      include: {
+        department: true,
+        assignments: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
     });
 
     return res.status(200).json({

@@ -39,7 +39,10 @@ export default function AdminStudents() {
         api.get('/admin/departments'),
       ]);
       if (studentsRes.data.success) {
-        setStudents(studentsRes.data.data);
+        const studentList = Array.isArray(studentsRes.data.data) 
+          ? studentsRes.data.data 
+          : (studentsRes.data.data?.students || []);
+        setStudents(studentList);
       }
       if (deptsRes.data.success) {
         setDepartments(deptsRes.data.data);
