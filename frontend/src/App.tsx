@@ -35,6 +35,7 @@ import AdminEnrollments from './pages/admin/Enrollments';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
 import AdminMonitoring from './pages/admin/Monitoring';
+import AdminSecurity from './pages/admin/Security';
 import AdminProfile from './pages/admin/Profile';
 
 export default function App() {
@@ -104,6 +105,7 @@ export default function App() {
                     <Route path="courses" element={<AdminCourses />} />
                     <Route path="enrollments" element={<AdminEnrollments />} />
                     <Route path="audit-logs" element={<AdminAuditLogs />} />
+                    <Route path="security" element={<AdminSecurity />} />
                     <Route path="reports" element={<AdminReports />} />
                     <Route path="profile" element={<AdminProfile />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />

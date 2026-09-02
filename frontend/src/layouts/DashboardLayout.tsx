@@ -21,6 +21,7 @@ import {
   History,
   TrendingUp,
   Activity,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -38,14 +39,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = {
     ADMIN: [
       { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-      { label: 'System Monitoring', path: '/admin/monitoring', icon: Activity },
       { label: 'Students', path: '/admin/students', icon: Users },
       { label: 'Faculty', path: '/admin/faculty', icon: GraduationCap },
       { label: 'Departments', path: '/admin/departments', icon: Building },
       { label: 'Courses', path: '/admin/courses', icon: BookOpen },
       { label: 'Enrollments', path: '/admin/enrollments', icon: FileCheck },
-      { label: 'Audit Logs', path: '/admin/audit-logs', icon: History },
       { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
+      { label: 'System Monitoring', path: '/admin/monitoring', icon: Activity },
+      { label: 'Audit Logs', path: '/admin/audit-logs', icon: History },
+      { label: 'Role & API Security', path: '/admin/security', icon: ShieldCheck },
       { label: 'Admin Profile', path: '/admin/profile', icon: User },
     ],
     FACULTY: [
