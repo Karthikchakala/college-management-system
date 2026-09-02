@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { User, Phone, MapPin, Building, Shield, Activity, Camera, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function AdminProfile() {
+  const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -95,6 +97,7 @@ export default function AdminProfile() {
         setAvatarPreview(res.data.data.avatarUrl);
         setSuccess('Administrator photo uploaded to AWS S3 successfully.');
         await fetchProfile();
+        await refreshUser();
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to upload photo.');

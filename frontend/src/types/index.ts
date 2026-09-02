@@ -13,6 +13,7 @@ export interface User {
   role: Role;
   status?: UserStatus;
   name?: string;
+  avatarUrl?: string;
   profileId?: string;
 }
 

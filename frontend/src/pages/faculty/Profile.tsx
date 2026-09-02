@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { User, Phone, MapPin, Building, Shield, Briefcase, GraduationCap, Camera, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface FacultyData {
@@ -21,6 +22,7 @@ interface FacultyData {
 }
 
 export default function FacultyProfile() {
+  const { refreshUser } = useAuth();
   const [faculty, setFaculty] = useState<FacultyData | null>(null);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -130,6 +132,7 @@ export default function FacultyProfile() {
         setAvatarPreview(res.data.data.avatarUrl);
         setSuccess('Faculty profile photo uploaded to AWS S3 successfully.');
         await fetchProfile();
+        await refreshUser();
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to upload faculty profile photo.');

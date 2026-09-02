@@ -34,15 +34,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleProfileResponse = (userData: any): User => {
     const rawUser = userData.user || userData;
     const role = rawUser.role || 'STUDENT';
-    let name = rawUser.name || 'Karthik Chakala';
+    let name = rawUser.name || 'CloudCampus User';
     let profileId: string | undefined = undefined;
+    let avatarUrl: string | undefined = rawUser.avatarUrl || undefined;
 
     if (role === 'STUDENT' && rawUser.student) {
       name = `${rawUser.student.firstName} ${rawUser.student.lastName}`;
       profileId = rawUser.student.id || rawUser.student.enrollmentNumber;
+      if (rawUser.student.avatarUrl) avatarUrl = rawUser.student.avatarUrl;
     } else if (role === 'FACULTY' && rawUser.faculty) {
       name = `${rawUser.faculty.firstName} ${rawUser.faculty.lastName}`;
       profileId = rawUser.faculty.id || rawUser.faculty.employeeId;
+      if (rawUser.faculty.avatarUrl) avatarUrl = rawUser.faculty.avatarUrl;
     }
 
     return {
@@ -50,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: rawUser.email,
       role,
       name,
+      avatarUrl,
       profileId: profileId || rawUser.profileId || 'STU001',
     };
   };

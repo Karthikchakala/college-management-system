@@ -258,8 +258,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2 focus:outline-none"
               >
-                <div className="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-semibold text-sm hover:scale-105 transition duration-150">
-                  {user.name?.charAt(0) || 'U'}
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 bg-primary-600 text-white flex items-center justify-center font-semibold text-sm hover:scale-105 transition duration-150 shadow-sm">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt={user.name || 'User'} className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{user.name?.charAt(0) || 'U'}</span>
+                  )}
                 </div>
               </button>
 
