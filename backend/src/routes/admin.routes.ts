@@ -83,6 +83,7 @@ router.post('/announcements', createAnnouncement);
 router.get('/audit-logs', getAuditLogs);
 
 // Dashboard Analytics & CSV Reports
+router.get('/dashboard', getDashboardStats);
 router.get('/dashboard-stats', getDashboardStats);
 router.get('/reports/export/:type', exportReport);
 
