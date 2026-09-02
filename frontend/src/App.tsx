@@ -23,6 +23,7 @@ import FacultyAttendance from './pages/faculty/Attendance';
 import FacultyAssignments from './pages/faculty/Assignments';
 import FacultySubmissions from './pages/faculty/Submissions';
 import FacultyAnnouncements from './pages/faculty/Announcements';
+import FacultyProfile from './pages/faculty/Profile';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -34,6 +35,7 @@ import AdminEnrollments from './pages/admin/Enrollments';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
 import AdminMonitoring from './pages/admin/Monitoring';
+import AdminProfile from './pages/admin/Profile';
 
 export default function App() {
   return (
@@ -79,6 +81,7 @@ export default function App() {
                     <Route path="assignments" element={<FacultyAssignments />} />
                     <Route path="submissions" element={<FacultySubmissions />} />
                     <Route path="announcements" element={<FacultyAnnouncements />} />
+                    <Route path="profile" element={<FacultyProfile />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </DashboardLayout>
@@ -102,6 +105,7 @@ export default function App() {
                     <Route path="enrollments" element={<AdminEnrollments />} />
                     <Route path="audit-logs" element={<AdminAuditLogs />} />
                     <Route path="reports" element={<AdminReports />} />
+                    <Route path="profile" element={<AdminProfile />} />
                     <Route path="*" element={<Navigate to="dashboard" replace />} />
                   </Routes>
                 </DashboardLayout>

@@ -46,6 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { label: 'Enrollments', path: '/admin/enrollments', icon: FileCheck },
       { label: 'Audit Logs', path: '/admin/audit-logs', icon: History },
       { label: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
+      { label: 'Admin Profile', path: '/admin/profile', icon: User },
     ],
     FACULTY: [
       { label: 'Dashboard', path: '/faculty/dashboard', icon: LayoutDashboard },
@@ -54,6 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { label: 'Assignments', path: '/faculty/assignments', icon: ClipboardList },
       { label: 'Grade Center', path: '/faculty/submissions', icon: FileSpreadsheet },
       { label: 'Post Notices', path: '/faculty/announcements', icon: MailCheck },
+      { label: 'Faculty Profile', path: '/faculty/profile', icon: User },
     ],
     STUDENT: [
       { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
@@ -62,6 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { label: 'Assignments', path: '/student/assignments', icon: ClipboardList },
       { label: 'Exam Results', path: '/student/results', icon: TrendingUp },
       { label: 'Campus Events', path: '/student/events', icon: CalendarDays },
+      { label: 'Student Profile', path: '/student/profile', icon: User },
       { label: 'Notifications', path: '/student/notifications', icon: Bell },
     ],
   };
@@ -267,7 +270,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
                   </div>
                   <Link
-                    to={user.role === 'STUDENT' ? '/student/profile' : '#'}
+                    to={
+                      user.role === 'STUDENT'
+                        ? '/student/profile'
+                        : user.role === 'FACULTY'
+                        ? '/faculty/profile'
+                        : '/admin/profile'
+                    }
                     onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2 px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 transition"
                   >

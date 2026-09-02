@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/db';
 import { authService } from '../services/auth.service';
 import { cognitoService } from '../services/cognito.service';
+import { storageService } from '../services/storage.service';
 import { AppError } from '../middleware/error.middleware';
 import { z } from 'zod';
 
@@ -15,6 +16,21 @@ export const loginSchema = z.object({
 export const linkCognitoSchema = z.object({
   body: z.object({
     idToken: z.string().min(10, 'idToken must be a valid JWT string'),
+  }),
+});
+
+export const updateProfileSchema = z.object({
+  body: z.object({
+    firstName: z.string().min(1).optional(),
+    lastName: z.string().min(1).optional(),
+    name: z.string().min(1).optional(),
+    phone: z.string().optional().nullable(),
+    address: z.string().optional().nullable(),
+    dateOfBirth: z.string().optional().nullable(),
+    gender: z.string().optional().nullable(),
+    qualification: z.string().optional().nullable(),
+    specialization: z.string().optional().nullable(),
+    experience: z.number().int().min(0).or(z.string().transform(v => parseInt(v, 10))).optional().nullable(),
   }),
 });
 
@@ -97,6 +113,10 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
       select: {
         id: true,
         email: true,
+        name: true,
+        phone: true,
+        avatarUrl: true,
+        avatarKey: true,
         role: true,
         status: true,
         createdAt: true,
@@ -113,10 +133,200 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
       throw new AppError('User not found', 404, 'NOT_FOUND');
     }
 
+    // Refresh presigned avatar URLs from S3 if keys exist
+    if (user.avatarKey && storageService.getDownloadUrl) {
+      try {
+        user.avatarUrl = await storageService.getDownloadUrl(user.avatarKey);
+      } catch (_) {}
+    }
+
+    if (user.student?.avatarKey && storageService.getDownloadUrl) {
+      try {
+        user.student.avatarUrl = await storageService.getDownloadUrl(user.student.avatarKey);
+      } catch (_) {}
+    }
+
+    if (user.faculty?.avatarKey && storageService.getDownloadUrl) {
+      try {
+        user.faculty.avatarUrl = await storageService.getDownloadUrl(user.faculty.avatarKey);
+      } catch (_) {}
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Profile retrieved successfully',
       data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId;
+    const userRole = req.user?.role;
+    if (!userId) {
+      throw new AppError('User not found in request', 401, 'UNAUTHORIZED');
+    }
+
+    const {
+      firstName,
+      lastName,
+      name,
+      phone,
+      address,
+      dateOfBirth,
+      gender,
+      qualification,
+      specialization,
+      experience,
+    } = req.body;
+
+    if (userRole === 'STUDENT') {
+      const parsedDob = dateOfBirth ? new Date(dateOfBirth) : undefined;
+      await prisma.student.update({
+        where: { userId },
+        data: {
+          firstName: firstName !== undefined ? firstName : undefined,
+          lastName: lastName !== undefined ? lastName : undefined,
+          phone: phone !== undefined ? phone : undefined,
+          address: address !== undefined ? address : undefined,
+          dateOfBirth: parsedDob,
+          gender: gender !== undefined ? gender : undefined,
+        },
+      });
+      if (phone !== undefined) {
+        await prisma.user.update({ where: { id: userId }, data: { phone } });
+      }
+    } else if (userRole === 'FACULTY') {
+      const expNum = experience !== undefined && experience !== null ? Number(experience) : undefined;
+      await prisma.faculty.update({
+        where: { userId },
+        data: {
+          firstName: firstName !== undefined ? firstName : undefined,
+          lastName: lastName !== undefined ? lastName : undefined,
+          phone: phone !== undefined ? phone : undefined,
+          address: address !== undefined ? address : undefined,
+          qualification: qualification !== undefined ? qualification : undefined,
+          specialization: specialization !== undefined ? specialization : undefined,
+          experience: expNum,
+        },
+      });
+      if (phone !== undefined) {
+        await prisma.user.update({ where: { id: userId }, data: { phone } });
+      }
+    } else if (userRole === 'ADMIN') {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          name: name !== undefined ? name : undefined,
+          phone: phone !== undefined ? phone : undefined,
+        },
+      });
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: 'UPDATE_PROFILE',
+        resource: 'User',
+        resourceId: userId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadProfileAvatar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId;
+    const userRole = req.user?.role;
+    if (!userId) {
+      throw new AppError('User not found in request', 401, 'UNAUTHORIZED');
+    }
+
+    if (!req.file) {
+      throw new AppError('Profile image file is required', 400, 'NO_FILE_UPLOADED');
+    }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
+      throw new AppError('Only JPEG, PNG, and WebP images are allowed', 400, 'INVALID_FILE_TYPE');
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { student: true, faculty: true },
+    });
+
+    const oldKey = currentUser?.avatarKey || currentUser?.student?.avatarKey || currentUser?.faculty?.avatarKey;
+    if (oldKey) {
+      try {
+        await storageService.deleteFile(oldKey);
+      } catch (e) {
+        console.warn('Failed to remove old avatar from S3', e);
+      }
+    }
+
+    const uploadRes = await storageService.uploadFile(
+      {
+        buffer: req.file.buffer,
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+      },
+      `profiles/${userId}`
+    );
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        avatarUrl: uploadRes.url,
+        avatarKey: uploadRes.key,
+      },
+    });
+
+    if (userRole === 'STUDENT' && currentUser?.student) {
+      await prisma.student.update({
+        where: { userId },
+        data: {
+          avatarUrl: uploadRes.url,
+          avatarKey: uploadRes.key,
+        },
+      });
+    } else if (userRole === 'FACULTY' && currentUser?.faculty) {
+      await prisma.faculty.update({
+        where: { userId },
+        data: {
+          avatarUrl: uploadRes.url,
+          avatarKey: uploadRes.key,
+        },
+      });
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: 'UPLOAD_AVATAR',
+        resource: 'User',
+        resourceId: userId,
+        metadata: { s3Key: uploadRes.key },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile image updated successfully',
+      data: {
+        avatarUrl: uploadRes.url,
+        avatarKey: uploadRes.key,
+      },
     });
   } catch (error) {
     next(error);
@@ -210,4 +420,3 @@ export const linkCognitoAccount = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
-
