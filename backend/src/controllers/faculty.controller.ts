@@ -3,6 +3,7 @@ import prisma from '../config/db';
 import { AppError } from '../middleware/error.middleware';
 import { storageService } from '../services/storage.service';
 import { notificationService } from '../services/notification.service';
+import { triggerAssignmentNotificationLambda } from '../services/lambda.service';
 import { z } from 'zod';
 
 export const createAssignmentSchema = z.object({
@@ -296,20 +297,8 @@ export const createAssignment = async (req: Request, res: Response, next: NextFu
       },
     });
 
-    // Notify enrolled students
-    const enrollments = await prisma.enrollment.findMany({
-      where: { courseId, status: 'ACTIVE' },
-      include: { student: true },
-    });
-
-    for (const e of enrollments) {
-      await notificationService.sendNotification(
-        e.student.userId,
-        'New Assignment Published',
-        `Professor published: ${title} for course. Due date: ${new Date(dueDate).toLocaleDateString()}`,
-        'ACADEMIC'
-      );
-    }
+    // Asynchronously trigger AWS Lambda for event-driven notification generation & SNS delivery
+    triggerAssignmentNotificationLambda(assignment.id);
 
     await prisma.auditLog.create({
       data: {

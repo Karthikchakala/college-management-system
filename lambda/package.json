@@ -1,0 +1,8 @@
+{
+  "name": "cloudcampus-lambdas",
+  "version": "1.0.0",
+  "description": "AWS Lambda functions for CloudCampus Assignment Notifications",
+  "dependencies": {
+    "pg": "^8.12.0"
+  }
+}
