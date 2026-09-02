@@ -32,6 +32,8 @@ const defaultAllowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5173',
+  'http://cloudcampus-frontend-production.s3-website-us-east-1.amazonaws.com',
+  'http://cloudcampus-frontend-production.s3-website.us-east-1.amazonaws.com',
 ];
 
 const envAllowedOrigins = process.env.FRONTEND_URL
@@ -52,7 +54,11 @@ app.use(cors({
     }
     try {
       const parsedUrl = new URL(origin);
-      if (parsedUrl.hostname.endsWith('.cloudfront.net')) {
+      if (
+        parsedUrl.hostname.endsWith('.cloudfront.net') ||
+        parsedUrl.hostname.endsWith('.s3-website-us-east-1.amazonaws.com') ||
+        parsedUrl.hostname.endsWith('.s3-website.us-east-1.amazonaws.com')
+      ) {
         return callback(null, true);
       }
     } catch (_) {}
