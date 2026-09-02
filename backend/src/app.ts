@@ -27,19 +27,35 @@ app.use(helmet({
 }));
 
 // CORS Configuration
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
-  : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'];
+const defaultAllowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+];
+
+const envAllowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((url) => url.trim().replace(/\/$/, ''))
+  : [];
+
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envAllowedOrigins])];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser or local dev requests without origin
+    // Allow non-browser or local dev/test requests without origin
     if (!origin || process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
       return callback(null, true);
     }
-    if (allowedOrigins.includes(origin)) {
+    const cleanOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.includes(cleanOrigin)) {
       return callback(null, true);
     }
+    try {
+      const parsedUrl = new URL(origin);
+      if (parsedUrl.hostname.endsWith('.cloudfront.net')) {
+        return callback(null, true);
+      }
+    } catch (_) {}
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
