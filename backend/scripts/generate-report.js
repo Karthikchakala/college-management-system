@@ -52,13 +52,15 @@ const sStudentNotifs = getBase64Img('screenshots/08-notifications/01_student_not
 const sAdminAudit = getBase64Img('screenshots/09-audit/01_admin_audit_trail_rds.png');
 const sAdminMonitor = getBase64Img('screenshots/12-cloudwatch/01_admin_monitoring_telemetry.png');
 
+console.log('Generating updated 28-page comprehensive AWS cloud deployment report...');
+
 const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CloudCampus — AWS Cloud Deployment Report (IIITDM Kurnool)</title>
+  <title>CloudCampus — AWS Multi-Tier Cloud Deployment Report (IIITDM Kurnool)</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
     @page {
       size: A4 portrait;
@@ -75,8 +77,8 @@ const htmlContent = `<!DOCTYPE html>
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 8.5pt;
-      line-height: 1.4;
+      font-size: 8.3pt;
+      line-height: 1.38;
       color: #1e293b;
       background: #ffffff;
       margin: 0;
@@ -87,7 +89,7 @@ const htmlContent = `<!DOCTYPE html>
       width: 210mm;
       height: 297mm;
       max-height: 297mm;
-      padding: 12mm 14mm 12mm 14mm;
+      padding: 11mm 13mm 11mm 13mm;
       position: relative;
       page-break-after: always;
       break-after: page;
@@ -110,8 +112,8 @@ const htmlContent = `<!DOCTYPE html>
       align-items: center;
       border-bottom: 1.5px solid #e2e8f0;
       padding-bottom: 3px;
-      margin-bottom: 6px;
-      font-size: 7pt;
+      margin-bottom: 5px;
+      font-size: 6.8pt;
       font-weight: 700;
       color: #64748b;
       letter-spacing: 0.5px;
@@ -138,8 +140,8 @@ const htmlContent = `<!DOCTYPE html>
       justify-content: space-between;
       align-items: center;
       border-top: 1px solid #e2e8f0;
-      padding-top: 4px;
-      font-size: 7pt;
+      padding-top: 3px;
+      font-size: 6.8pt;
       color: #64748b;
       font-weight: 600;
       margin-top: auto;
@@ -149,12 +151,12 @@ const htmlContent = `<!DOCTYPE html>
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4.5px;
     }
 
     /* Headings */
     h1.sec-title {
-      font-size: 12.5pt;
+      font-size: 12pt;
       font-weight: 800;
       color: #0b192c;
       letter-spacing: -0.3px;
@@ -163,16 +165,16 @@ const htmlContent = `<!DOCTYPE html>
       gap: 6px;
       border-left: 3.5px solid #ff9900;
       padding-left: 7px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       line-height: 1.2;
     }
 
     h2.sub-title {
-      font-size: 9pt;
+      font-size: 8.8pt;
       font-weight: 700;
       color: #1e293b;
       margin-top: 2px;
-      margin-bottom: 2px;
+      margin-bottom: 1.5px;
     }
 
     p {
@@ -292,8 +294,8 @@ const htmlContent = `<!DOCTYPE html>
     table.data-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 7.5pt;
-      margin: 3px 0;
+      font-size: 7.2pt;
+      margin: 2.5px 0;
       background: #ffffff;
       border-radius: 6px;
       overflow: hidden;
@@ -305,14 +307,14 @@ const htmlContent = `<!DOCTYPE html>
       color: #ffffff;
       font-weight: 700;
       text-align: left;
-      padding: 4px 6px;
-      font-size: 7pt;
+      padding: 3.5px 5px;
+      font-size: 6.8pt;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
 
     table.data-table td {
-      padding: 3.5px 6px;
+      padding: 3px 5px;
       border-bottom: 1px solid #f1f5f9;
       color: #334155;
       vertical-align: middle;
@@ -328,7 +330,7 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 800;
       padding: 1px 4px;
       border-radius: 3px;
-      font-size: 6.8pt;
+      font-size: 6.5pt;
       display: inline-block;
     }
 
@@ -339,7 +341,17 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 700;
       padding: 1px 4px;
       border-radius: 3px;
-      font-size: 6.8pt;
+      font-size: 6.5pt;
+    }
+
+    .badge-mgmt {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 6.5pt;
     }
 
     .badge-denied {
@@ -348,7 +360,7 @@ const htmlContent = `<!DOCTYPE html>
       font-weight: 800;
       padding: 1px 4px;
       border-radius: 3px;
-      font-size: 6.8pt;
+      font-size: 6.5pt;
     }
 
     /* Callout Boxes */
@@ -357,8 +369,8 @@ const htmlContent = `<!DOCTYPE html>
       border-left: 3px solid #0284c7;
       border-radius: 0 6px 6px 0;
       padding: 4px 7px;
-      margin: 3px 0;
-      font-size: 7.8pt;
+      margin: 2px 0;
+      font-size: 7.6pt;
     }
 
     .callout.aws {
@@ -374,8 +386,8 @@ const htmlContent = `<!DOCTYPE html>
     /* Screenshot containers */
     .img-grid {
       display: grid;
-      gap: 6px;
-      margin: 3px 0;
+      gap: 5px;
+      margin: 2px 0;
     }
 
     .img-grid.cols-2 {
@@ -397,25 +409,25 @@ const htmlContent = `<!DOCTYPE html>
 
     .img-box img {
       width: 100%;
-      height: 105px;
+      height: 110px;
       object-fit: cover;
       display: block;
       border-bottom: 1px solid #e2e8f0;
     }
 
     .img-box.tall img {
-      height: 138px;
+      height: 145px;
     }
 
     .img-box.hero-img img {
-      height: 168px;
+      height: 175px;
     }
 
     .img-caption {
-      font-size: 6.6pt;
+      font-size: 6.5pt;
       font-weight: 700;
       color: #475569;
-      padding: 3px 5px;
+      padding: 2.5px 4px;
       background: #f8fafc;
       text-align: center;
       line-height: 1.2;
@@ -436,7 +448,7 @@ const htmlContent = `<!DOCTYPE html>
       justify-content: space-between;
       gap: 4px;
       margin: 3px 0;
-      font-size: 7pt;
+      font-size: 6.8pt;
     }
 
     .flow-step {
@@ -473,8 +485,8 @@ const htmlContent = `<!DOCTYPE html>
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-      margin: 3px 0;
+      gap: 4px;
+      margin: 2.5px 0;
     }
 
     .card-stat {
@@ -486,14 +498,14 @@ const htmlContent = `<!DOCTYPE html>
     }
 
     .card-stat .val {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 800;
       color: #0b192c;
       font-family: 'JetBrains Mono', monospace;
     }
 
     .card-stat .lbl {
-      font-size: 6.5pt;
+      font-size: 6.2pt;
       color: #64748b;
       font-weight: 600;
       text-transform: uppercase;
@@ -505,7 +517,7 @@ const htmlContent = `<!DOCTYPE html>
       color: #0f172a;
       padding: 1px 4px;
       border-radius: 3px;
-      font-size: 7pt;
+      font-size: 6.8pt;
       border: 1px solid #e2e8f0;
     }
   </style>
@@ -571,23 +583,23 @@ const htmlContent = `<!DOCTYPE html>
       <h1 class="sec-title">1. Executive Summary & Project Abstract</h1>
 
       <p>
-        <strong>CloudCampus</strong> is an enterprise-grade, multi-tier College Campus Management System architected, deployed, and verified entirely on <strong>Amazon Web Services (AWS)</strong> in the <code>us-east-1</code> (N. Virginia) region. The system transitions traditional monolithic campus administration into a high-availability, secure, and observable cloud platform capable of serving three distinct academic roles: <strong>Students</strong>, <strong>Faculty</strong>, and <strong>Administrators</strong>.
+        <strong>CloudCampus</strong> is an enterprise-grade, multi-tier College Campus Management System architected, deployed, and verified entirely on <strong>Amazon Web Services (AWS)</strong> in the <code>us-east-1</code> (N. Virginia) region. The system transitions traditional monolithic campus administration into a high-availability, secure, and observable cloud platform serving three distinct academic roles: <strong>Students</strong>, <strong>Faculty</strong>, and <strong>Administrators</strong>.
       </p>
 
       <div class="callout aws">
-        <strong>Primary Engineering Thesis:</strong> Rather than using cloud infrastructure solely for basic virtual machine hosting, CloudCampus deeply leverages <strong>10 native AWS services</strong>—mapping each architectural responsibility (Identity, Ingress, Compute, Managed Database, Object Storage, Event-Driven Serverless, Message Queuing, Scheduled Crons, Immutable Auditing, and Observability) to specialized cloud primitives.
+        <strong>Primary Engineering Thesis:</strong> Rather than using cloud infrastructure solely for basic virtual machine hosting, CloudCampus deeply integrates <strong>14 native AWS services</strong>—mapping each architectural responsibility (Identity, Ingress, Routing, Compute, Managed Database, Object Storage, Event-Driven Serverless, Message Queuing, Scheduled Automation, Secrets Governance, Access Control, Auditing, Network Isolation, and Observability) to specialized cloud primitives.
       </div>
 
       <h2 class="sub-title">1.1 Core Architectural Highlights</h2>
-      <ul style="padding-left: 14px; font-size: 7.8pt; line-height: 1.4; color: #334155;">
-        <li><strong>Serverless Cloud Identity:</strong> Complete deprecation of local database authentication in favor of <strong>AWS Cognito User Pools</strong> (<code>us-east-1_Ic9huqJjL</code>) with Cognito Groups and cryptographically verified JWT tokens.</li>
+      <ul style="padding-left: 14px; font-size: 7.6pt; line-height: 1.38; color: #334155;">
+        <li><strong>Serverless Cloud Identity:</strong> Complete deprecation of local database passwords in favor of <strong>AWS Cognito User Pools</strong> (<code>us-east-1_Ic9huqJjL</code>) with Cognito Groups and cryptographically verified JWT tokens.</li>
         <li><strong>Ingress & Private Routing:</strong> Zero direct public exposure of backend servers; external traffic enters via <strong>AWS API Gateway HTTP API</strong> (<code>7k2yo6gy77</code>) and routes across an <strong>AWS Application Load Balancer (ALB)</strong> into private EC2 subnets.</li>
-        <li><strong>Dual Database & Storage Separation:</strong> Relational institutional data resides in <strong>AWS RDS PostgreSQL</strong> (<code>cloudcampus-db</code>) while unstructured binary artifacts and profile images are stored directly in <strong>Amazon S3</strong> (<code>cloudcampus-511225358997</code>).</li>
+        <li><strong>Dual Database & Storage Separation:</strong> Relational institutional data resides in <strong>Amazon RDS PostgreSQL</strong> (<code>cloudcampus-db</code>) while unstructured binary artifacts and profile images are stored directly in <strong>Amazon S3</strong> (<code>cloudcampus-511225358997</code>).</li>
         <li><strong>Asynchronous Serverless Workflows:</strong> Faculty assignment creation asynchronously triggers <strong>AWS Lambda</strong> (<code>CloudCampus-Assignment-Notification</code>) to identify enrolled students and dispatch alerts via <strong>Amazon SNS</strong>; scheduled deadlines are tracked by <strong>Amazon EventBridge</strong> triggering reminder Lambdas with duplicate prevention.</li>
         <li><strong>Full-Stack Observability & Auditing:</strong> Native <strong>AWS CloudWatch Monitoring Dashboard</strong> (<code>CloudCampus-Monitoring</code>) tracking 12 live telemetry metrics across EC2, ALB, RDS, and Lambda alongside immutable RDS audit logging.</li>
       </ul>
 
-      <div class="img-grid cols-2" style="margin-top: 4px;">
+      <div class="img-grid cols-2" style="margin-top: 3px;">
         <div class="img-box">
           <img src="${sLoginApp}" alt="CloudCampus Cloud Login" />
           <div class="img-caption">Figure 1.1 — CloudCampus Cloud-Only Authentication Interface</div>
@@ -600,7 +612,7 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Executive Summary &bull; Page 2 of 26</div>
+      <div>Executive Summary &bull; Page 2 of 28</div>
     </div>
   </div>
 
@@ -613,7 +625,7 @@ const htmlContent = `<!DOCTYPE html>
     <div class="page-content">
       <h1 class="sec-title">2. Table of Contents & Navigation Index</h1>
 
-      <table class="data-table" style="font-size: 7.5pt;">
+      <table class="data-table" style="font-size: 7.2pt;">
         <thead>
           <tr>
             <th style="width: 10%;">Sec #</th>
@@ -624,213 +636,315 @@ const htmlContent = `<!DOCTYPE html>
         <tbody>
           <tr><td><strong>1</strong></td><td><strong>Executive Summary & Project Abstract</strong></td><td style="text-align: right;"><strong>2</strong></td></tr>
           <tr><td><strong>2</strong></td><td><strong>Table of Contents & Navigation Index</strong></td><td style="text-align: right;"><strong>3</strong></td></tr>
-          <tr><td><strong>3</strong></td><td><strong>Project Objectives & AWS Service-to-Feature Mapping</strong></td><td style="text-align: right;"><strong>4</strong></td></tr>
-          <tr><td><strong>4</strong></td><td><strong>Complete System Architecture & Top-Level Diagram</strong></td><td style="text-align: right;"><strong>5</strong></td></tr>
-          <tr><td><strong>5</strong></td><td><strong>Deployed AWS Cloud Infrastructure Inventory</strong></td><td style="text-align: right;"><strong>6</strong></td></tr>
-          <tr><td><strong>6</strong></td><td><strong>User Identity, Authentication & RBAC (AWS Cognito)</strong></td><td style="text-align: right;"><strong>7</strong></td></tr>
-          <tr><td><strong>7</strong></td><td><strong>API Ingress Layer: AWS API Gateway & Application Load Balancer</strong></td><td style="text-align: right;"><strong>8</strong></td></tr>
-          <tr><td><strong>8</strong></td><td><strong>Backend Application Compute: AWS EC2 Cluster & PM2 Runtime</strong></td><td style="text-align: right;"><strong>9</strong></td></tr>
-          <tr><td><strong>9</strong></td><td><strong>Relational Persistence: AWS RDS PostgreSQL Managed Database</strong></td><td style="text-align: right;"><strong>10</strong></td></tr>
-          <tr><td><strong>10</strong></td><td><strong>Object Storage Architecture: Amazon S3 File Storage</strong></td><td style="text-align: right;"><strong>11</strong></td></tr>
-          <tr><td><strong>11</strong></td><td><strong>Profile Management & Real-Time Avatar S3 Pipeline</strong></td><td style="text-align: right;"><strong>12</strong></td></tr>
-          <tr><td><strong>12</strong></td><td><strong>Student Portal Implementation & Verified Features</strong></td><td style="text-align: right;"><strong>13</strong></td></tr>
-          <tr><td><strong>13</strong></td><td><strong>Faculty Portal Implementation & Teaching Workflows</strong></td><td style="text-align: right;"><strong>14</strong></td></tr>
-          <tr><td><strong>14</strong></td><td><strong>Administrator Governance Portal & System Controls</strong></td><td style="text-align: right;"><strong>15</strong></td></tr>
-          <tr><td><strong>15</strong></td><td><strong>Event-Driven Serverless Notifications: AWS Lambda & Amazon SNS</strong></td><td style="text-align: right;"><strong>16</strong></td></tr>
-          <tr><td><strong>16</strong></td><td><strong>Automated Assignment Reminders: Amazon EventBridge & Lambda</strong></td><td style="text-align: right;"><strong>17</strong></td></tr>
-          <tr><td><strong>17</strong></td><td><strong>Admin Immutable Audit Trails & Activity Logging</strong></td><td style="text-align: right;"><strong>18</strong></td></tr>
-          <tr><td><strong>18</strong></td><td><strong>Role-Based API Security & RBAC Permission Matrix</strong></td><td style="text-align: right;"><strong>19</strong></td></tr>
-          <tr><td><strong>19</strong></td><td><strong>CloudWatch Monitoring Dashboard & Metric Alarms</strong></td><td style="text-align: right;"><strong>20</strong></td></tr>
-          <tr><td><strong>20</strong></td><td><strong>Three-Layer End-to-End System Verification</strong></td><td style="text-align: right;"><strong>21</strong></td></tr>
-          <tr><td><strong>21</strong></td><td><strong>Comprehensive Functional Testing & Test Results Matrix</strong></td><td style="text-align: right;"><strong>22</strong></td></tr>
-          <tr><td><strong>22</strong></td><td><strong>Cloud vs. Local Architecture Comparison & Scalability</strong></td><td style="text-align: right;"><strong>23</strong></td></tr>
-          <tr><td><strong>23</strong></td><td><strong>AWS Resource Cost Considerations & "Why This Architecture?"</strong></td><td style="text-align: right;"><strong>24</strong></td></tr>
-          <tr><td><strong>24</strong></td><td><strong>CloudCampus Demonstrated Capabilities & Visual Summary</strong></td><td style="text-align: right;"><strong>25</strong></td></tr>
-          <tr><td><strong>25</strong></td><td><strong>Conclusion, Future Scope & Academic References</strong></td><td style="text-align: right;"><strong>26</strong></td></tr>
+          <tr><td><strong>3</strong></td><td><strong>Project Objectives & Complete 14-AWS Service Inventory Table</strong></td><td style="text-align: right;"><strong>4</strong></td></tr>
+          <tr><td><strong>4</strong></td><td><strong>AWS Service Categorization & Architectural Role Breakdown</strong></td><td style="text-align: right;"><strong>5</strong></td></tr>
+          <tr><td><strong>5</strong></td><td><strong>Complete System Cloud Architecture (Full-Page Vector Diagram)</strong></td><td style="text-align: right;"><strong>6</strong></td></tr>
+          <tr><td><strong>6</strong></td><td><strong>Amazon VPC Network Boundary & Subnet Topology Architecture</strong></td><td style="text-align: right;"><strong>7</strong></td></tr>
+          <tr><td><strong>7</strong></td><td><strong>Deployed AWS Cloud Infrastructure Directory (Live Resource Manifest)</strong></td><td style="text-align: right;"><strong>8</strong></td></tr>
+          <tr><td><strong>8</strong></td><td><strong>User Identity, Authentication & RBAC (AWS Cognito OIDC Flow)</strong></td><td style="text-align: right;"><strong>9</strong></td></tr>
+          <tr><td><strong>9</strong></td><td><strong>API Ingress Layer: AWS API Gateway HTTP API & Application Load Balancer</strong></td><td style="text-align: right;"><strong>10</strong></td></tr>
+          <tr><td><strong>10</strong></td><td><strong>Backend Application Compute: AWS EC2 Cluster & PM2 Runtime</strong></td><td style="text-align: right;"><strong>11</strong></td></tr>
+          <tr><td><strong>11</strong></td><td><strong>Relational Persistence: Amazon RDS for PostgreSQL Managed Database</strong></td><td style="text-align: right;"><strong>12</strong></td></tr>
+          <tr><td><strong>12</strong></td><td><strong>Object Storage Architecture: Amazon S3 File Storage & Presigned URLs</strong></td><td style="text-align: right;"><strong>13</strong></td></tr>
+          <tr><td><strong>13</strong></td><td><strong>Profile Management & Real-Time Avatar S3 Pipeline (Flow & UI)</strong></td><td style="text-align: right;"><strong>14</strong></td></tr>
+          <tr><td><strong>14</strong></td><td><strong>Student Portal Implementation & Verified Feature Set</strong></td><td style="text-align: right;"><strong>15</strong></td></tr>
+          <tr><td><strong>15</strong></td><td><strong>Faculty Portal Implementation & Teaching Workflows</strong></td><td style="text-align: right;"><strong>16</strong></td></tr>
+          <tr><td><strong>16</strong></td><td><strong>Administrator Governance Portal & System Controls</strong></td><td style="text-align: right;"><strong>17</strong></td></tr>
+          <tr><td><strong>17</strong></td><td><strong>Workflow A: Event-Driven Serverless Notifications (AWS Lambda & SNS)</strong></td><td style="text-align: right;"><strong>18</strong></td></tr>
+          <tr><td><strong>18</strong></td><td><strong>Workflow B: Scheduled Due-Date Reminders (Amazon EventBridge & Lambda)</strong></td><td style="text-align: right;"><strong>19</strong></td></tr>
+          <tr><td><strong>19</strong></td><td><strong>Admin Immutable Audit Logging System (RDS Audit Trails & Evidence)</strong></td><td style="text-align: right;"><strong>20</strong></td></tr>
+          <tr><td><strong>20</strong></td><td><strong>Role-Based API Security & RBAC Permission Matrix (401/403 Tests)</strong></td><td style="text-align: right;"><strong>21</strong></td></tr>
+          <tr><td><strong>21</strong></td><td><strong>AWS IAM Security & AWS Secrets Manager Runtime Credential Injection</strong></td><td style="text-align: right;"><strong>22</strong></td></tr>
+          <tr><td><strong>22</strong></td><td><strong>CloudWatch Monitoring Dashboard & Infrastructure Metric Alarms</strong></td><td style="text-align: right;"><strong>23</strong></td></tr>
+          <tr><td><strong>23</strong></td><td><strong>Three-Layer End-to-End System Verification (Browser &rarr; API &rarr; RDS/S3)</strong></td><td style="text-align: right;"><strong>24</strong></td></tr>
+          <tr><td><strong>24</strong></td><td><strong>Comprehensive Functional Testing & Test Results Matrix</strong></td><td style="text-align: right;"><strong>25</strong></td></tr>
+          <tr><td><strong>25</strong></td><td><strong>Cloud vs. Local Architecture Comparison & Scalability Analysis</strong></td><td style="text-align: right;"><strong>26</strong></td></tr>
+          <tr><td><strong>26</strong></td><td><strong>AWS Resource Cost Considerations & "Why This Architecture?" Rationale</strong></td><td style="text-align: right;"><strong>27</strong></td></tr>
+          <tr><td><strong>27</strong></td><td><strong>CloudCampus Demonstrated Capabilities Grid, Conclusion & References</strong></td><td style="text-align: right;"><strong>28</strong></td></tr>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 6px;">Key Figure & Table Directory</h2>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 7.2pt; color: #475569;">
+      <h2 class="sub-title" style="margin-top: 5px;">Key Figure & Architecture Table Index</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 6.8pt; color: #475569;">
         <div>
-          <p><strong>Figure 4.1:</strong> Full-Page Multi-Tier Cloud Architecture (p. 5)</p>
-          <p><strong>Figure 6.1:</strong> Cognito Hosted UI & JWT Token Exchange (p. 7)</p>
-          <p><strong>Figure 10.1:</strong> S3 Object Upload & Presigned URL Flow (p. 11)</p>
-          <p><strong>Figure 11.2:</strong> Profile Avatar In-Flight Header Rendering (p. 12)</p>
+          <p><strong>Figure 5.1:</strong> Full-Page Multi-Tier Cloud Architecture (p. 6)</p>
+          <p><strong>Figure 6.1:</strong> Amazon VPC Subnet & Endpoint Topology (p. 7)</p>
+          <p><strong>Figure 8.1:</strong> Cognito Hosted UI & JWT Exchange (p. 9)</p>
+          <p><strong>Figure 13.1:</strong> S3 Object Upload & Presigned URL Flow (p. 14)</p>
         </div>
         <div>
-          <p><strong>Figure 15.1:</strong> Event-Driven Notification Execution (p. 16)</p>
-          <p><strong>Figure 17.1:</strong> Live RDS Immutable Audit Trail (p. 18)</p>
-          <p><strong>Figure 18.1:</strong> Read-Only API Role Permission Matrix (p. 19)</p>
-          <p><strong>Figure 19.1:</strong> CloudWatch 12-Widget Live Dashboard (p. 20)</p>
+          <p><strong>Figure 17.1:</strong> Event-Driven Notification Execution (p. 18)</p>
+          <p><strong>Figure 19.1:</strong> Live RDS Immutable Audit Trail (p. 20)</p>
+          <p><strong>Figure 20.1:</strong> Read-Only API Role Permission Matrix (p. 21)</p>
+          <p><strong>Figure 22.1:</strong> CloudWatch 12-Widget Live Dashboard (p. 23)</p>
         </div>
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Table of Contents &bull; Page 3 of 26</div>
+      <div>Table of Contents &bull; Page 3 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 4: OBJECTIVES & MAPPING ================= -->
+  <!-- ================= PAGE 4: AWS SERVICE INVENTORY (ALL 14 SERVICES) ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
       <div>IIITDM Kurnool &bull; Page 4</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">3. Project Objectives & AWS Service Mapping</h1>
+      <h1 class="sec-title">3. AWS Services Used in CloudCampus</h1>
 
       <p>
-        The engineering goal of the CloudCampus project is to design, deploy, and evaluate a fully cloud-native campus operations platform. Every architectural component fulfills a strict production requirement rather than serving as a superficial demonstration.
+        CloudCampus leverages a comprehensive suite of AWS services divided into <strong>Runtime Application Services</strong> (direct participants in user requests and asynchronous jobs) and <strong>AWS Management / Development Services</strong> (used for administrative deployment and governance).
       </p>
 
-      <table class="data-table" style="margin-top: 3px;">
+      <table class="data-table">
         <thead>
           <tr>
-            <th style="width: 28%;">Campus Requirement</th>
-            <th style="width: 24%;">AWS Service</th>
-            <th style="width: 48%;">Architectural Role & Implementation Detail</th>
+            <th style="width: 22%;">AWS Service</th>
+            <th style="width: 14%;">Classification</th>
+            <th style="width: 64%;">Specific Architectural Purpose in CloudCampus</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>User Authentication</strong></td>
-            <td><span class="badge-aws">AWS Cognito</span></td>
-            <td>Managed identity pool, OAuth2/OIDC JWT tokens, user password auth & group RBAC.</td>
+            <td><strong>Amazon EC2</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Hosts the clustered Express + Prisma application server (<code>i-03681025582d882c5</code>) on Amazon Linux 2023 under PM2.</td>
           </tr>
           <tr>
-            <td><strong>API Gateway Ingress</strong></td>
-            <td><span class="badge-aws">Amazon API Gateway</span></td>
-            <td>Public HTTPS endpoint (<code>7k2yo6gy77</code>), throttling, CORS, and ALB forwarding.</td>
+            <td><strong>Amazon API Gateway</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>HTTP API (<code>7k2yo6gy77</code>) providing public HTTPS entry, CORS headers, edge throttling, and direct ALB forwarding.</td>
           </tr>
           <tr>
-            <td><strong>Traffic Distribution</strong></td>
-            <td><span class="badge-aws">AWS ALB</span></td>
-            <td>Layer-7 Application Load Balancer with target group health checks on port 5000.</td>
+            <td><strong>AWS Cognito</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>User Pool (<code>us-east-1_Ic9huqJjL</code>) managing user identities, password authentication, OAuth2 OIDC tokens, and RBAC groups.</td>
           </tr>
           <tr>
-            <td><strong>Application Backend</strong></td>
-            <td><span class="badge-aws">Amazon EC2</span></td>
-            <td>t3.medium instance running clustered Express + Prisma under PM2 process management.</td>
+            <td><strong>AWS ALB</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Application Load Balancer distributing HTTP traffic across target instances with automated <code>/health</code> health checking.</td>
           </tr>
           <tr>
-            <td><strong>Structured Persistence</strong></td>
-            <td><span class="badge-aws">Amazon RDS</span></td>
-            <td>Managed PostgreSQL 17.5 database with automated backups, VPC isolation & SSL encryption.</td>
+            <td><strong>Amazon RDS PostgreSQL</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Primary relational database (<code>cloudcampus-db</code>) running PostgreSQL 17.5 in private database subnets with SSL encryption.</td>
           </tr>
           <tr>
-            <td><strong>Object Storage</strong></td>
-            <td><span class="badge-aws">Amazon S3</span></td>
-            <td>Encrypted bucket (<code>cloudcampus-511225358997</code>) for user avatars and submission files.</td>
+            <td><strong>Amazon S3</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Encrypted object storage bucket (<code>cloudcampus-511225358997</code>) for user profile photos and assignment submission files.</td>
           </tr>
           <tr>
-            <td><strong>Event Processing</strong></td>
-            <td><span class="badge-aws">AWS Lambda</span></td>
-            <td>VPC-enabled Node.js serverless functions for asynchronous assignment notification jobs.</td>
+            <td><strong>AWS Secrets Manager</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Secure storage of PostgreSQL connection credentials (<code>cloudcampus/rds</code>); injected via IAM at runtime without hardcoding.</td>
           </tr>
           <tr>
-            <td><strong>Scheduled Crons</strong></td>
-            <td><span class="badge-aws">Amazon EventBridge</span></td>
-            <td>Automated daily cron rule triggering assignment reminder Lambda functions.</td>
+            <td><strong>AWS Lambda</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>In-VPC serverless functions for event-driven assignment notification fanout and deadline reminder verification.</td>
           </tr>
           <tr>
-            <td><strong>Alert Broadcasting</strong></td>
-            <td><span class="badge-aws">Amazon SNS</span></td>
-            <td>Publish/subscribe topic (<code>CloudCampus-Notifications</code>) for broadcast alerts.</td>
+            <td><strong>Amazon SNS</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Publish/subscribe topic (<code>CloudCampus-Notifications</code>) broadcasting academic notifications to enrolled students.</td>
           </tr>
           <tr>
-            <td><strong>Observability & Alarms</strong></td>
-            <td><span class="badge-aws">Amazon CloudWatch</span></td>
-            <td>12-widget monitoring dashboard, 4 metric alarms, and application log stream aggregation.</td>
+            <td><strong>Amazon EventBridge</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Automated scheduled cron rule (<code>rate(1 day)</code>) triggering daily assignment due-date reminder scans.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon CloudWatch</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>12-widget monitoring dashboard (<code>CloudCampus-Monitoring</code>), 4 metric alarms, and application log stream aggregation.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon VPC</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Network isolation boundary (<code>vpc-0146f9a06bf1163a6</code>) with private subnets, security groups, and Interface Endpoints.</td>
+          </tr>
+          <tr>
+            <td><strong>AWS IAM</strong></td>
+            <td><span class="badge-aws">RUNTIME</span></td>
+            <td>Least-privilege execution roles (<code>CloudCampus-EC2-Role</code>, <code>CloudCampus-Lambda-Execution-Role</code>) and security policies.</td>
+          </tr>
+          <tr>
+            <td><strong>AWS CloudShell</strong></td>
+            <td><span class="badge-mgmt">MANAGEMENT</span></td>
+            <td>Browser-based CLI environment used for deployment, database migrations, and AWS CLI verification (not in runtime path).</td>
+          </tr>
+          <tr>
+            <td><strong>Billing & Cost Mgmt</strong></td>
+            <td><span class="badge-mgmt">MANAGEMENT</span></td>
+            <td>Cost allocation, budget tracking, and Free Tier consumption governance across provisioned project resources.</td>
           </tr>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">Key Architectural Verification Tenets</h2>
-      <div class="grid-4">
-        <div class="card-stat"><div class="val">100%</div><div class="lbl">Cloud Backend</div></div>
-        <div class="card-stat"><div class="val">0</div><div class="lbl">Local DB Dep.</div></div>
-        <div class="card-stat"><div class="val">10</div><div class="lbl">AWS Services</div></div>
-        <div class="card-stat"><div class="val">100%</div><div class="lbl">Automated QA</div></div>
+      <div class="callout aws" style="margin-top: 3px;">
+        <strong>Database Engine Clarification:</strong> While the AWS console groups relational engines under <em>"Aurora and RDS"</em>, CloudCampus specifically deploys <strong>Amazon RDS for PostgreSQL</strong> (v17.5).
       </div>
-
-      <p style="font-size: 7.5pt; color: #475569; margin-top: 3px;">
-        <em>Note: Local port 5000 is strictly closed. All backend computation and database access execute exclusively on AWS EC2 (<code>i-03681025582d882c5</code>) and AWS RDS (<code>cloudcampus-db</code>).</em>
-      </p>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Objectives & Service Mapping &bull; Page 4 of 26</div>
+      <div>AWS Service Inventory &bull; Page 4 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 5: COMPLETE SYSTEM ARCHITECTURE ================= -->
+  <!-- ================= PAGE 5: SERVICE CATEGORIZATION ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
       <div>IIITDM Kurnool &bull; Page 5</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">4. Complete System Cloud Architecture</h1>
+      <h1 class="sec-title">4. AWS Service Categorization & Architecture Roles</h1>
 
-      <div class="flow-card" style="background: #ffffff; border: 1.5px solid #cbd5e1; padding: 8px;">
-        <div style="text-align: center; margin-bottom: 6px;">
+      <p>
+        The table below categorizes the deployed AWS cloud services according to foundational cloud computing domains, highlighting the separation of concerns across compute, networking, data persistence, and governance.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 26%;">Functional Domain</th>
+            <th style="width: 32%;">AWS Services Utilized</th>
+            <th style="width: 42%;">Architectural Role & Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Compute & Processing</strong></td>
+            <td>Amazon EC2, AWS Lambda</td>
+            <td>Stateless REST API backend cluster and event-driven serverless background workers.</td>
+          </tr>
+          <tr>
+            <td><strong>Networking & Ingress</strong></td>
+            <td>Amazon VPC, AWS ALB, Amazon API Gateway</td>
+            <td>Network perimeter isolation, edge SSL termination, Layer-7 load balancing, and routing.</td>
+          </tr>
+          <tr>
+            <td><strong>Relational Persistence</strong></td>
+            <td>Amazon RDS for PostgreSQL</td>
+            <td>ACID-compliant relational database for academic records, enrollments, and audit logs.</td>
+          </tr>
+          <tr>
+            <td><strong>Object Storage</strong></td>
+            <td>Amazon S3</td>
+            <td>High-durability storage for user avatars, assignment PDFs, and submission archives.</td>
+          </tr>
+          <tr>
+            <td><strong>Identity & Security</strong></td>
+            <td>AWS Cognito, AWS IAM, AWS Secrets Manager</td>
+            <td>OIDC user authentication, RBAC group tokens, least-privilege IAM, and runtime secret injection.</td>
+          </tr>
+          <tr>
+            <td><strong>Messaging & Scheduling</strong></td>
+            <td>Amazon SNS, Amazon EventBridge</td>
+            <td>Asynchronous pub/sub notification delivery and scheduled cron automation.</td>
+          </tr>
+          <tr>
+            <td><strong>Observability & Alarms</strong></td>
+            <td>Amazon CloudWatch</td>
+            <td>Live multi-service telemetry dashboard, metric threshold alarms, and log stream collection.</td>
+          </tr>
+          <tr>
+            <td><strong>Cloud Administration</strong></td>
+            <td>AWS CloudShell, AWS Billing & Cost Mgmt</td>
+            <td>Browser-based CLI administration, SSM remote execution, and cost budget monitoring.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="sub-title" style="margin-top: 4px;">Service Responsibility Summary</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; font-size: 7.2pt; margin-top: 2px;">
+        <div class="flow-card">
+          <strong>Compute & Ingress Pipeline:</strong><br/>
+          API Gateway &rarr; ALB &rarr; EC2 (PM2) &rarr; RDS / S3
+        </div>
+        <div class="flow-card">
+          <strong>Serverless Notification Pipeline:</strong><br/>
+          EC2 / EventBridge &rarr; Lambda &rarr; RDS &rarr; SNS &rarr; Student
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
+      <div>Service Categorization &bull; Page 5 of 28</div>
+    </div>
+  </div>
+
+  <!-- ================= PAGE 6: COMPLETE SYSTEM ARCHITECTURE DIAGRAM ================= -->
+  <div class="page">
+    <div class="page-header">
+      <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
+      <div>IIITDM Kurnool &bull; Page 6</div>
+    </div>
+    <div class="page-content">
+      <h1 class="sec-title">5. Complete System Cloud Architecture</h1>
+
+      <div class="flow-card" style="background: #ffffff; border: 1.5px solid #cbd5e1; padding: 7px;">
+        <div style="text-align: center; margin-bottom: 5px;">
           <span style="font-size: 8.5pt; font-weight: 800; color: #0b192c; text-transform: uppercase; letter-spacing: 0.5px;">
-            CloudCampus End-to-End Cloud Infrastructure Diagram
+            Figure 5.1 — Full-Page Multi-Tier Cloud Deployment Architecture Diagram
           </span>
         </div>
 
-        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px;">
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 5px;">
           <div style="background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 6px; padding: 3px 8px; font-size: 7.2pt; font-weight: 700; color: #0369a1;">STUDENT (Browser)</div>
           <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 6px; padding: 3px 8px; font-size: 7.2pt; font-weight: 700; color: #b45309;">FACULTY (Browser)</div>
           <div style="background: #f3e8ff; border: 1px solid #d8b4fe; border-radius: 6px; padding: 3px 8px; font-size: 7.2pt; font-weight: 700; color: #7e22ce;">ADMIN (Browser)</div>
         </div>
 
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800;">│ (HTTPS / localhost:3000)</div>
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800;">▼</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800;">│ (HTTPS / localhost:3000)</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800;">▼</div>
 
-        <div class="flow-step aws-step" style="width: 82%; margin: 0 auto; padding: 5px;">
+        <div class="flow-step aws-step" style="width: 84%; margin: 0 auto; padding: 4.5px;">
           <strong>AWS Cognito User Pool (us-east-1_Ic9huqJjL)</strong><br/>
           <span style="font-size: 6.5pt; font-weight: 500;">OAuth2 / OIDC JWT Tokens &bull; Client ID: 3kv2vgpkklqtlpfom2t72dn29n &bull; Groups: STUDENT, FACULTY, ADMIN</span>
         </div>
 
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Bearer JWT Token</div>
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800;">▼</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Bearer JWT Token</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800;">▼</div>
 
-        <div class="flow-step aws-step" style="width: 82%; margin: 0 auto; padding: 5px;">
+        <div class="flow-step aws-step" style="width: 84%; margin: 0 auto; padding: 4.5px;">
           <strong>AWS API Gateway HTTP API (7k2yo6gy77)</strong><br/>
           <span style="font-size: 6.5pt; font-weight: 500;">Public Ingress &bull; Route: /prod/api/* &bull; Direct VPC Integration to ALB</span>
         </div>
 
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Target Traffic (Port 80/5000)</div>
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800;">▼</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Target Traffic (Port 80/5000)</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800;">▼</div>
 
-        <div class="flow-step aws-step" style="width: 82%; margin: 0 auto; padding: 5px;">
+        <div class="flow-step aws-step" style="width: 84%; margin: 0 auto; padding: 4.5px;">
           <strong>AWS Application Load Balancer (CloudCampus-ALB)</strong><br/>
           <span style="font-size: 6.5pt; font-weight: 500;">Target Group: CloudCampus-Backend-TG &bull; Health Checks on /health</span>
         </div>
 
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Forwarded Requests</div>
-        <div style="text-align: center; font-size: 7.5pt; color: #64748b; font-weight: 800;">▼</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800; margin: 1px 0;">│ Forwarded Requests</div>
+        <div style="text-align: center; font-size: 7.2pt; color: #64748b; font-weight: 800;">▼</div>
 
-        <div class="flow-step highlight" style="width: 86%; margin: 0 auto; padding: 6px;">
+        <div class="flow-step highlight" style="width: 88%; margin: 0 auto; padding: 5px;">
           <strong>AWS EC2 Application Server (i-03681025582d882c5)</strong><br/>
-          <span style="font-size: 6.8pt; font-weight: 500; color: #cbd5e1;">Express 4.19 + Prisma ORM Cluster (PM2) &bull; Port 5000 &bull; Private Subnet VPC vpc-0146f9a06bf1163a6</span>
+          <span style="font-size: 6.8pt; font-weight: 500; color: #cbd5e1;">Express 4.19 + Prisma ORM Cluster (PM2) &bull; Port 5000 &bull; Private Subnet in VPC vpc-0146f9a06bf1163a6</span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
-          <div class="flow-step aws-step" style="padding: 5px;">
-            <strong>AWS RDS PostgreSQL (cloudcampus-db)</strong><br/>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
+          <div class="flow-step aws-step" style="padding: 4.5px;">
+            <strong>Amazon RDS PostgreSQL (cloudcampus-db)</strong><br/>
             <span style="font-size: 6.5pt; font-weight: 500;">Relational Data &bull; Port 5432 &bull; campusadmin &bull; SSL Enabled</span>
           </div>
-          <div class="flow-step aws-step" style="padding: 5px;">
+          <div class="flow-step aws-step" style="padding: 4.5px;">
             <strong>Amazon S3 Bucket (cloudcampus-511225358997)</strong><br/>
             <span style="font-size: 6.5pt; font-weight: 500;">Object Storage &bull; Profile Photos &bull; Assignment Submissions</span>
           </div>
         </div>
 
-        <div style="margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 5px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+        <div style="margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 4px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
           <div class="flow-step" style="font-size: 6.5pt; padding: 3px;">
             <strong>AWS Lambda Services</strong><br/>Assignment & Reminder Functions
           </div>
@@ -844,23 +958,99 @@ const htmlContent = `<!DOCTYPE html>
       </div>
 
       <div class="callout success" style="margin-top: 3px;">
-        <strong>Isolation Guarantee:</strong> Backend compute and database instances are completely decoupled from frontend execution. All state transitions persist in managed AWS cloud storage.
+        <strong>Decoupled Cloud Primitives:</strong> User authentication, public ingress, application compute, relational persistence, and object storage operate as isolated managed tiers.
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Complete Cloud Architecture &bull; Page 5 of 26</div>
+      <div>Complete Cloud Architecture &bull; Page 6 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 6: INFRASTRUCTURE INVENTORY ================= -->
+  <!-- ================= PAGE 7: VPC NETWORK TOPOLOGY ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 6</div>
+      <div>IIITDM Kurnool &bull; Page 7</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">5. Deployed AWS Cloud Infrastructure Inventory</h1>
+      <h1 class="sec-title">6. Amazon VPC Network Boundary & Subnets</h1>
+
+      <p>
+        All compute, database, and serverless Lambda executions are enclosed inside <strong>Amazon Virtual Private Cloud (VPC)</strong> <code>vpc-0146f9a06bf1163a6</code> across availability zones in <code>us-east-1</code>.
+      </p>
+
+      <div class="flow-card" style="border: 2px solid #0284c7; background: #f0f9ff; padding: 8px;">
+        <div style="font-weight: 800; font-size: 8pt; color: #0369a1; margin-bottom: 4px; text-align: center;">
+          Amazon VPC: vpc-0146f9a06bf1163a6 (CIDR: 10.0.0.0/16)
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div style="background: #ffffff; border: 1px solid #bae6fd; border-radius: 6px; padding: 6px;">
+            <strong style="color: #0369a1; font-size: 7.2pt;">Public / Ingress Subnets</strong>
+            <p style="font-size: 6.8pt; color: #475569; margin-top: 2px;">
+              &bull; <code>subnet-030b656a0b401b23d</code> (us-east-1a)<br/>
+              &bull; <code>subnet-0b8c7db479db1b113</code> (us-east-1b)<br/>
+              Hosts: AWS Application Load Balancer (ALB)
+            </p>
+          </div>
+
+          <div style="background: #ffffff; border: 1px solid #bae6fd; border-radius: 6px; padding: 6px;">
+            <strong style="color: #0369a1; font-size: 7.2pt;">Private Compute & DB Subnets</strong>
+            <p style="font-size: 6.8pt; color: #475569; margin-top: 2px;">
+              &bull; <code>subnet-0ea7b2a7ac8952aa9</code> (us-east-1a)<br/>
+              &bull; <code>subnet-02f2f01a92b63d057</code> (us-east-1b)<br/>
+              Hosts: EC2 Backend, RDS PostgreSQL, VPC Lambdas
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 6px; background: #ffffff; border: 1px solid #bae6fd; border-radius: 6px; padding: 6px;">
+          <strong style="color: #0369a1; font-size: 7.2pt;">VPC Interface & Gateway Endpoints</strong>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; font-size: 6.5pt; color: #334155; margin-top: 2px;">
+            <div><strong>S3 Gateway:</strong><br/><code>vpce-0abe4018a7179df71</code></div>
+            <div><strong>Secrets Manager:</strong><br/><code>vpce-03453d022c9090b54</code></div>
+            <div><strong>Amazon SNS:</strong><br/><code>vpce-01779161bced06bc7</code></div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table" style="margin-top: 4px;">
+        <thead>
+          <tr>
+            <th>Security Group</th>
+            <th>Associated Resource</th>
+            <th>Ingress Security Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>sg-05b0adcaad20ea66f</code></td>
+            <td>CloudCampus-EC2-SG (Backend & ALB)</td>
+            <td>Accepts port 5000 from ALB; port 443 for VPC endpoints.</td>
+          </tr>
+          <tr>
+            <td><code>sg-084f06c983a45c8b6</code></td>
+            <td>RDS & VPC Lambda SG</td>
+            <td>Accepts port 5432 (PostgreSQL) strictly from EC2 SG & Lambda ENIs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="page-footer">
+      <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
+      <div>VPC Network Topology &bull; Page 7 of 28</div>
+    </div>
+  </div>
+
+  <!-- ================= PAGE 8: INFRASTRUCTURE INVENTORY ================= -->
+  <div class="page">
+    <div class="page-header">
+      <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
+      <div>IIITDM Kurnool &bull; Page 8</div>
+    </div>
+    <div class="page-content">
+      <h1 class="sec-title">7. Deployed AWS Infrastructure Inventory</h1>
 
       <p>
         The table below provides a verified inventory of all live AWS cloud resources provisioned for CloudCampus in the <code>us-east-1</code> region.
@@ -951,32 +1141,35 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">VPC Network Architecture</h2>
-      <p style="font-size: 7.5pt;">
-        All compute, database, and Lambda components reside in VPC <code>vpc-0146f9a06bf1163a6</code> across subnets <code>subnet-0ea7b2a7ac8952aa9</code> and <code>subnet-02f2f01a92b63d057</code>. VPC Interface Endpoints for Secrets Manager (<code>vpce-03453d022c9090b54</code>) and SNS (<code>vpce-01779161bced06bc7</code>) ensure serverless functions operate without public internet exposure.
-      </p>
+      <h2 class="sub-title" style="margin-top: 4px;">Verified Operating Health</h2>
+      <div class="grid-4">
+        <div class="card-stat"><div class="val">HTTP 200</div><div class="lbl">API Gateway</div></div>
+        <div class="card-stat"><div class="val">HEALTHY</div><div class="lbl">ALB Targets</div></div>
+        <div class="card-stat"><div class="val">ONLINE</div><div class="lbl">PM2 Workers</div></div>
+        <div class="card-stat"><div class="val">AVAILABLE</div><div class="lbl">RDS Instance</div></div>
+      </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Infrastructure Inventory &bull; Page 6 of 26</div>
+      <div>Infrastructure Directory &bull; Page 8 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 7: AUTHENTICATION & COGNITO ================= -->
+  <!-- ================= PAGE 9: COGNITO AUTH ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 7</div>
+      <div>IIITDM Kurnool &bull; Page 9</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">6. User Identity, Authentication & RBAC (Cognito)</h1>
+      <h1 class="sec-title">8. User Identity & Authentication (AWS Cognito)</h1>
 
       <p>
         Authentication is fully decoupled from the application database. Users authenticate directly against <strong>AWS Cognito User Pool</strong> (<code>us-east-1_Ic9huqJjL</code>). Upon successful password validation, Cognito issues a signed OpenID Connect (OIDC) JWT ID token containing user identity claims and group memberships.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Cognito Cryptographic Verification & User Identity Linking Pipeline</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 8.1 — Cognito Cryptographic Verification & User Identity Linking Pipeline</div>
         <div class="flow-steps">
           <div class="flow-step">Browser Login</div>
           <div class="flow-arrow">➔</div>
@@ -993,33 +1186,33 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-2">
         <div class="img-box">
           <img src="${sLoginApp}" alt="CloudCampus Login UI" />
-          <div class="img-caption">Figure 6.1 — CloudCampus Cloud-Only Authentication Interface</div>
+          <div class="img-caption">Figure 8.2 — CloudCampus Cloud-Only Authentication Interface</div>
         </div>
         <div class="img-box">
           <img src="${sCognitoHosted}" alt="Cognito Hosted UI" />
-          <div class="img-caption">Figure 6.2 — AWS Cognito Managed OAuth2 Hosted UI</div>
+          <div class="img-caption">Figure 8.3 — AWS Cognito Managed OAuth2 Hosted UI</div>
         </div>
       </div>
 
-      <h2 class="sub-title">6.1 Server-Side Cryptographic Token Validation</h2>
+      <h2 class="sub-title">8.1 Server-Side Cryptographic Token Validation</h2>
       <p style="font-size: 7.5pt;">
         Every API request contains the Cognito JWT in the <code>Authorization: Bearer &lt;token&gt;</code> header. The Express <code>authenticate</code> middleware verifies the cryptographic signature against the official Cognito JSON Web Key Set (JWKS) URL at <code>https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Ic9huqJjL/.well-known/jwks.json</code>. The token subject (<code>cognitoSub</code>) is mapped to the corresponding active record in the RDS <code>User</code> table.
       </p>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Authentication & Cognito &bull; Page 7 of 26</div>
+      <div>Identity & Authentication &bull; Page 9 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 8: API GATEWAY & ALB ================= -->
+  <!-- ================= PAGE 10: API GATEWAY & ALB ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 8</div>
+      <div>IIITDM Kurnool &bull; Page 10</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">7. API Ingress Layer: API Gateway & ALB</h1>
+      <h1 class="sec-title">9. API Ingress Layer: API Gateway & ALB</h1>
 
       <p>
         The ingress architecture isolates the backend compute cluster behind a managed two-tier routing pipeline. <strong>Amazon API Gateway HTTP API</strong> acts as the single public entrypoint, proxying requests into the <strong>AWS Application Load Balancer (ALB)</strong>.
@@ -1064,32 +1257,32 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">7.1 Network Verification in Browser DevTools</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">9.1 Network Verification in Browser DevTools</h2>
       <div class="callout success">
         <strong>DevTools Network Audit:</strong> F12 inspection verifies 100% of XHR/Fetch API requests originate against <code>https://7k2yo6gy77.execute-api.us-east-1.amazonaws.com/prod/api/*</code>. Zero requests target localhost:5000 or local proxies.
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>API Ingress & ALB &bull; Page 8 of 26</div>
+      <div>API Ingress & ALB &bull; Page 10 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 9: EC2 COMPUTE CLUSTER ================= -->
+  <!-- ================= PAGE 11: EC2 COMPUTE ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 9</div>
+      <div>IIITDM Kurnool &bull; Page 11</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">8. Backend Application Compute: AWS EC2 & PM2</h1>
+      <h1 class="sec-title">10. Backend Compute: AWS EC2 & PM2 Cluster</h1>
 
       <p>
         The application backend executes on an <strong>Amazon EC2</strong> instance (<code>i-03681025582d882c5</code>) running Amazon Linux 2023. The Node.js / Express application is orchestrated using <strong>PM2 process manager</strong> in cluster mode across multiple worker processes.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">EC2 Runtime Process & Secrets Lifecycle</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 10.1 — EC2 Runtime Process & Secrets Lifecycle</div>
         <div class="flow-steps">
           <div class="flow-step">System Boot / PM2 Start</div>
           <div class="flow-arrow">➔</div>
@@ -1138,28 +1331,28 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">8.1 Secrets Manager Integration Without Hardcoded Keys</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">10.1 Secrets Manager Integration Without Hardcoded Keys</h2>
       <p style="font-size: 7.5pt;">
         Zero database passwords or Cognito secrets exist in plaintext on the EC2 filesystem or Git repository. The EC2 instance retrieves credentials at runtime from AWS Secrets Manager (<code>cloudcampus/rds</code>) via IAM execution credentials.
       </p>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>EC2 Compute Cluster &bull; Page 9 of 26</div>
+      <div>Backend Compute & EC2 &bull; Page 11 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 10: RDS POSTGRESQL ================= -->
+  <!-- ================= PAGE 12: RDS POSTGRESQL ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 10</div>
+      <div>IIITDM Kurnool &bull; Page 12</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">9. Relational Persistence: AWS RDS PostgreSQL</h1>
+      <h1 class="sec-title">11. Relational Persistence: Amazon RDS PostgreSQL</h1>
 
       <p>
-        All structured institutional entities are persisted in <strong>Amazon RDS PostgreSQL 17.5</strong> (<code>cloudcampus-db</code>). The database is isolated inside private database subnets and accessible only from authorized security groups over SSL.
+        All structured institutional entities are persisted in <strong>Amazon RDS for PostgreSQL 17.5</strong> (<code>cloudcampus-db</code>). The database is isolated inside private database subnets and accessible only from authorized security groups over SSL.
       </p>
 
       <table class="data-table">
@@ -1219,32 +1412,32 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">9.1 Data Integrity & Constraint Governance</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">11.1 Data Integrity & Constraint Governance</h2>
       <div class="callout success">
         <strong>Relational Isolation:</strong> Foreign key constraints, unique indexes on roll numbers and course codes, and transactional Prisma operations prevent orphaned records or invalid institutional state transitions.
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Relational Persistence & RDS &bull; Page 10 of 26</div>
+      <div>Relational Persistence & RDS &bull; Page 12 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 11: S3 OBJECT STORAGE ================= -->
+  <!-- ================= PAGE 13: S3 OBJECT STORAGE ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 11</div>
+      <div>IIITDM Kurnool &bull; Page 13</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">10. Object Storage: Amazon S3 Architecture</h1>
+      <h1 class="sec-title">12. Object Storage: Amazon S3 File Storage</h1>
 
       <p>
         Unstructured binary assets (profile avatars, assignment PDFs, and submission archives) are stored in <strong>Amazon S3</strong> (<code>cloudcampus-511225358997</code>). Rather than storing blobs in PostgreSQL, RDS stores only the S3 object key.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">S3 Object Storage & Presigned Retrieval Pipeline</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 12.1 — S3 Object Storage & Presigned Retrieval Pipeline</div>
         <div class="flow-steps">
           <div class="flow-step">Browser Upload</div>
           <div class="flow-arrow">➔</div>
@@ -1285,25 +1478,25 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">10.1 Security & Access Control</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">12.1 Security & Access Control</h2>
       <p style="font-size: 7.5pt;">
         The bucket enforces <strong>Block Public Access</strong>. Client browsers never interact with public S3 URLs. When a user requests their profile or assignment documents, the backend generates short-lived AWS SDK presigned URLs, ensuring strict authorization before file delivery.
       </p>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Object Storage & S3 &bull; Page 11 of 26</div>
+      <div>Object Storage & S3 &bull; Page 13 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 12: PROFILE MANAGEMENT ================= -->
+  <!-- ================= PAGE 14: PROFILE MANAGEMENT ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 12</div>
+      <div>IIITDM Kurnool &bull; Page 14</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">11. Profile Management & S3 Avatar Pipeline</h1>
+      <h1 class="sec-title">13. Profile Management & S3 Avatar Pipeline</h1>
 
       <p>
         The Profile Management module enables Students, Faculty, and Administrators to update personal details and upload profile photos. Uploaded images are streamed to S3, recorded in RDS, and dynamically propagated to the top-right navigation header across all pages.
@@ -1312,26 +1505,26 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-3">
         <div class="img-box">
           <img src="${sStudentProfile}" alt="Student Profile Management" />
-          <div class="img-caption">Figure 11.1 — Student Profile Page with Uploaded Photo</div>
+          <div class="img-caption">Figure 13.1 — Student Profile Page with Photo</div>
         </div>
         <div class="img-box">
           <img src="${sFacultyProfile}" alt="Faculty Profile Management" />
-          <div class="img-caption">Figure 11.2 — Faculty Profile Page with Department Details</div>
+          <div class="img-caption">Figure 13.2 — Faculty Profile Page Details</div>
         </div>
         <div class="img-box">
           <img src="${sAdminProfile}" alt="Admin Profile Management" />
-          <div class="img-caption">Figure 11.3 — Admin System Profile Management</div>
+          <div class="img-caption">Figure 13.3 — Admin System Profile</div>
         </div>
       </div>
 
       <div class="img-grid cols-2" style="margin-top: 3px;">
         <div class="img-box tall">
           <img src="${sStudentNavAvatar}" alt="Student Navbar Avatar" />
-          <div class="img-caption">Figure 11.4 — Student Navigation Bar Top-Right Avatar Rendering</div>
+          <div class="img-caption">Figure 13.4 — Student Navigation Bar Top-Right Avatar Rendering</div>
         </div>
         <div class="img-box tall">
           <img src="${sFacultyNavAvatar}" alt="Faculty Navbar Avatar" />
-          <div class="img-caption">Figure 11.5 — Faculty Navigation Bar Top-Right Avatar Rendering</div>
+          <div class="img-caption">Figure 13.5 — Faculty Navigation Bar Top-Right Avatar Rendering</div>
         </div>
       </div>
 
@@ -1341,18 +1534,18 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Profile Management &bull; Page 12 of 26</div>
+      <div>Profile Management &bull; Page 14 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 13: STUDENT PORTAL ================= -->
+  <!-- ================= PAGE 15: STUDENT PORTAL ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 13</div>
+      <div>IIITDM Kurnool &bull; Page 15</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">12. Student Portal Implementation & Verification</h1>
+      <h1 class="sec-title">14. Student Portal Implementation & Verification</h1>
 
       <p>
         The Student portal provides authenticated access to course enrollments, attendance tracking, assignment deadlines, published semester examination marks, and campus event registrations.
@@ -1361,26 +1554,26 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-2">
         <div class="img-box tall">
           <img src="${sStudentDash}" alt="Student Dashboard" />
-          <div class="img-caption">Figure 12.1 — Student Dashboard with Live Academic Overview</div>
+          <div class="img-caption">Figure 14.1 — Student Dashboard with Live Academic Overview</div>
         </div>
         <div class="img-box tall">
           <img src="${sStudentAtt}" alt="Student Attendance" />
-          <div class="img-caption">Figure 12.2 — Student Attendance Tracker & Percentage Breakdown</div>
+          <div class="img-caption">Figure 14.2 — Student Attendance Tracker & Percentage Breakdown</div>
         </div>
       </div>
 
       <div class="img-grid cols-3" style="margin-top: 3px;">
         <div class="img-box">
           <img src="${sStudentCourses}" alt="Student Enrolled Courses" />
-          <div class="img-caption">Figure 12.3 — Enrolled Courses & Syllabus</div>
+          <div class="img-caption">Figure 14.3 — Enrolled Courses & Syllabus</div>
         </div>
         <div class="img-box">
           <img src="${sStudentResults}" alt="Student Semester Results" />
-          <div class="img-caption">Figure 12.4 — Examination Grades & GPA</div>
+          <div class="img-caption">Figure 14.4 — Examination Grades & GPA</div>
         </div>
         <div class="img-box">
           <img src="${sStudentEvents}" alt="Student Campus Events" />
-          <div class="img-caption">Figure 12.5 — Campus Events Directory</div>
+          <div class="img-caption">Figure 14.5 — Campus Events Directory</div>
         </div>
       </div>
 
@@ -1406,29 +1599,23 @@ const htmlContent = `<!DOCTYPE html>
             <td>RDS Course Table with Faculty Details</td>
             <td><span class="badge-pass">PASS</span></td>
           </tr>
-          <tr>
-            <td><strong>Attendance Logs</strong></td>
-            <td><code>GET /api/student/attendance</code></td>
-            <td>RDS Attendance Table filtering Student ID</td>
-            <td><span class="badge-pass">PASS</span></td>
-          </tr>
         </tbody>
       </table>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Student Portal &bull; Page 13 of 26</div>
+      <div>Student Portal &bull; Page 15 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 14: FACULTY PORTAL ================= -->
+  <!-- ================= PAGE 16: FACULTY PORTAL ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 14</div>
+      <div>IIITDM Kurnool &bull; Page 16</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">13. Faculty Portal Implementation & Workflows</h1>
+      <h1 class="sec-title">15. Faculty Portal Implementation & Workflows</h1>
 
       <p>
         The Faculty portal provides educators with class roster management, student attendance marking, assignment authoring with automated Lambda notification triggers, and student submission grading.
@@ -1437,26 +1624,26 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-2">
         <div class="img-box tall">
           <img src="${sFacultyDash}" alt="Faculty Dashboard" />
-          <div class="img-caption">Figure 13.1 — Faculty Dashboard with Assigned Classes Overview</div>
+          <div class="img-caption">Figure 15.1 — Faculty Dashboard with Assigned Classes Overview</div>
         </div>
         <div class="img-box tall">
           <img src="${sFacultyCourses}" alt="Faculty Assigned Courses" />
-          <div class="img-caption">Figure 13.2 — Faculty Course Catalog & Enrolled Student Lists</div>
+          <div class="img-caption">Figure 15.2 — Faculty Course Catalog & Enrolled Student Lists</div>
         </div>
       </div>
 
       <div class="img-grid cols-3" style="margin-top: 3px;">
         <div class="img-box">
           <img src="${sFacultyAtt}" alt="Faculty Attendance Marking" />
-          <div class="img-caption">Figure 13.3 — Live Attendance Marking</div>
+          <div class="img-caption">Figure 15.3 — Live Attendance Marking</div>
         </div>
         <div class="img-box">
           <img src="${sFacultyGrading}" alt="Faculty Grading Submissions" />
-          <div class="img-caption">Figure 13.4 — Student Submission Grading</div>
+          <div class="img-caption">Figure 15.4 — Submission Grading</div>
         </div>
         <div class="img-box">
           <img src="${sFacultyAnnounce}" alt="Faculty Announcements" />
-          <div class="img-caption">Figure 13.5 — Class Notice Broadcast</div>
+          <div class="img-caption">Figure 15.5 — Notice Broadcast</div>
         </div>
       </div>
 
@@ -1487,18 +1674,18 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Faculty Portal &bull; Page 14 of 26</div>
+      <div>Faculty Portal &bull; Page 16 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 15: ADMIN PORTAL ================= -->
+  <!-- ================= PAGE 17: ADMIN PORTAL ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 15</div>
+      <div>IIITDM Kurnool &bull; Page 17</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">14. Administrator Governance Portal</h1>
+      <h1 class="sec-title">16. Administrator Governance Portal</h1>
 
       <p>
         The Administrator portal provides institution-level governance over student admissions, faculty appointments, departmental structures, course allocations, institutional reporting, and immutable audit logs.
@@ -1507,61 +1694,61 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-2">
         <div class="img-box tall">
           <img src="${sAdminDash}" alt="Admin Overview Dashboard" />
-          <div class="img-caption">Figure 14.1 — Admin Command Dashboard with Cluster Statistics</div>
+          <div class="img-caption">Figure 16.1 — Admin Command Dashboard with Cluster Statistics</div>
         </div>
         <div class="img-box tall">
           <img src="${sAdminStudents}" alt="Admin Student Records" />
-          <div class="img-caption">Figure 14.2 — Student Admissions & Records Governance</div>
+          <div class="img-caption">Figure 16.2 — Student Admissions & Records Governance</div>
         </div>
       </div>
 
       <div class="img-grid cols-3" style="margin-top: 3px;">
         <div class="img-box">
           <img src="${sAdminFaculty}" alt="Admin Faculty Roster" />
-          <div class="img-caption">Figure 14.3 — Faculty Roster & Allocations</div>
+          <div class="img-caption">Figure 16.3 — Faculty Roster</div>
         </div>
         <div class="img-box">
           <img src="${sAdminDepts}" alt="Admin Departments" />
-          <div class="img-caption">Figure 14.4 — Academic Departments</div>
+          <div class="img-caption">Figure 16.4 — Academic Depts</div>
         </div>
         <div class="img-box">
           <img src="${sAdminCourses}" alt="Admin Courses" />
-          <div class="img-caption">Figure 14.5 — Course Catalog Allocation</div>
+          <div class="img-caption">Figure 16.5 — Course Allocation</div>
         </div>
       </div>
 
       <div class="img-grid cols-2" style="margin-top: 3px;">
         <div class="img-box">
           <img src="${sAdminEnroll}" alt="Admin Enrollments" />
-          <div class="img-caption">Figure 14.6 — Student Course Enrollments</div>
+          <div class="img-caption">Figure 16.6 — Course Enrollments</div>
         </div>
         <div class="img-box">
           <img src="${sAdminReports}" alt="Admin Export Reports" />
-          <div class="img-caption">Figure 14.7 — Institutional Reports (JSON/CSV)</div>
+          <div class="img-caption">Figure 16.7 — Institutional Reports (JSON/CSV)</div>
         </div>
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Admin Portal &bull; Page 15 of 26</div>
+      <div>Admin Portal &bull; Page 17 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 16: WORKFLOW A — LAMBDA NOTIFICATIONS ================= -->
+  <!-- ================= PAGE 18: WORKFLOW A — LAMBDA NOTIFICATIONS ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 16</div>
+      <div>IIITDM Kurnool &bull; Page 18</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">15. Serverless Notifications: AWS Lambda & SNS</h1>
+      <h1 class="sec-title">17. Serverless Notifications: AWS Lambda & SNS</h1>
 
       <p>
         <strong>Workflow A (Event-Driven Assignment Creation):</strong> When a faculty member publishes an assignment, the EC2 Express backend saves the assignment in RDS and asynchronously invokes <strong>AWS Lambda</strong> (<code>CloudCampus-Assignment-Notification</code>) with <code>InvocationType: 'Event'</code>.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Workflow A: Asynchronous Serverless Notification Pipeline</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 17.1 — Workflow A: Asynchronous Serverless Notification Pipeline</div>
         <div class="flow-steps">
           <div class="flow-step">Faculty Publishes Assignment</div>
           <div class="flow-arrow">➔</div>
@@ -1578,15 +1765,15 @@ const htmlContent = `<!DOCTYPE html>
       <div class="img-grid cols-2">
         <div class="img-box tall">
           <img src="${sStudentAssign}" alt="Student Assignment View" />
-          <div class="img-caption">Figure 15.1 — Newly Published Assignment Visible to Enrolled Students</div>
+          <div class="img-caption">Figure 17.2 — Newly Published Assignment Visible to Enrolled Students</div>
         </div>
         <div class="img-box tall">
           <img src="${sStudentNotifs}" alt="Student Notification Alert" />
-          <div class="img-caption">Figure 15.2 — Real-Time Lambda Notification Delivered to Student Feed</div>
+          <div class="img-caption">Figure 17.3 — Real-Time Lambda Notification Delivered to Student Feed</div>
         </div>
       </div>
 
-      <h2 class="sub-title" style="margin-top: 3px;">15.1 In-VPC Lambda Execution & Enrolled Student Isolation</h2>
+      <h2 class="sub-title" style="margin-top: 3px;">17.1 In-VPC Lambda Execution & Enrolled Student Isolation</h2>
       <ul style="padding-left: 14px; font-size: 7.5pt; line-height: 1.4; color: #334155;">
         <li>Lambda connects to RDS PostgreSQL over VPC subnets using credentials retrieved from AWS Secrets Manager.</li>
         <li>Lambda queries active enrollments (<code>courseId = assignment.courseId AND status = 'ACTIVE'</code>).</li>
@@ -1596,25 +1783,25 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Serverless Notifications &bull; Page 16 of 26</div>
+      <div>Serverless Notifications &bull; Page 18 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 17: WORKFLOW B — EVENTBRIDGE REMINDERS ================= -->
+  <!-- ================= PAGE 19: WORKFLOW B — EVENTBRIDGE REMINDERS ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 17</div>
+      <div>IIITDM Kurnool &bull; Page 19</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">16. Scheduled Reminders: EventBridge & Lambda</h1>
+      <h1 class="sec-title">18. Scheduled Reminders: EventBridge & Lambda</h1>
 
       <p>
         <strong>Workflow B (Scheduled Assignment Due-Date Reminders):</strong> An <strong>Amazon EventBridge</strong> rule executes on a recurring schedule to trigger <code>CloudCampus-Assignment-Reminder</code>. The Lambda scans RDS for assignments due in the next 48 hours and alerts enrolled students.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Workflow B: Scheduled EventBridge Automation Flow</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 18.1 — Workflow B: Scheduled EventBridge Automation Flow</div>
         <div class="flow-steps">
           <div class="flow-step aws-step">EventBridge Rule (rate(1 day))</div>
           <div class="flow-arrow">➔</div>
@@ -1660,25 +1847,25 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">16.1 Live Execution Evidence from CloudWatch</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">18.1 Live Execution Evidence from CloudWatch</h2>
       <div class="callout aws">
         <strong>Execution Payload:</strong> <code>{"success":true,"data":{"assignmentsChecked":1,"totalRemindersCreated":3,"totalRemindersSkipped":0}}</code>. Subsequent immediate re-execution returned <code>{"totalRemindersCreated":0,"totalRemindersSkipped":3}</code>, proving perfect idempotency.
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Scheduled Reminders &bull; Page 17 of 26</div>
+      <div>Scheduled Reminders &bull; Page 19 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 18: ADMIN AUDIT LOGS ================= -->
+  <!-- ================= PAGE 20: ADMIN AUDIT LOGS ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 18</div>
+      <div>IIITDM Kurnool &bull; Page 20</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">17. Admin Immutable Audit Logging System</h1>
+      <h1 class="sec-title">19. Admin Immutable Audit Logging System</h1>
 
       <p>
         Security and institutional governance require full accountability. CloudCampus logs critical business events (assignment creation, profile photo uploads, attendance marking, and grade publishing) into the immutable RDS <code>AuditLog</code> table.
@@ -1686,7 +1873,7 @@ const htmlContent = `<!DOCTYPE html>
 
       <div class="img-box hero-img">
         <img src="${sAdminAudit}" alt="Admin Audit Log UI" />
-        <div class="img-caption">Figure 17.1 — Admin Audit Trail UI Displaying Real Verified Actions from AWS RDS PostgreSQL</div>
+        <div class="img-caption">Figure 19.1 — Admin Audit Trail UI Displaying Real Verified Actions from AWS RDS PostgreSQL</div>
       </div>
 
       <table class="data-table" style="margin-top: 3px;">
@@ -1737,18 +1924,18 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Admin Audit Logging &bull; Page 18 of 26</div>
+      <div>Admin Audit Logging &bull; Page 20 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 19: ROLE-BASED API SECURITY ================= -->
+  <!-- ================= PAGE 21: ROLE-BASED API SECURITY ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 19</div>
+      <div>IIITDM Kurnool &bull; Page 21</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">18. Role-Based API Security & RBAC Matrix</h1>
+      <h1 class="sec-title">20. Role-Based API Security & RBAC Matrix</h1>
 
       <p>
         Security is enforced strictly on the server-side. Modifying frontend URLs or manipulating client-side state cannot bypass authorization; the Express <code>authorize(['STUDENT'|'FACULTY'|'ADMIN'])</code> middleware enforces authorization on every request.
@@ -1824,7 +2011,7 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">18.1 Automated HTTP Security Test Results</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">20.1 Automated HTTP Security Test Results</h2>
       <div class="grid-4">
         <div class="card-stat"><div class="val">401</div><div class="lbl">Unauthenticated</div></div>
         <div class="card-stat"><div class="val">403</div><div class="lbl">Student &rarr; Faculty</div></div>
@@ -1834,18 +2021,87 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Role-Based API Security &bull; Page 19 of 26</div>
+      <div>Role-Based API Security &bull; Page 21 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 20: CLOUDWATCH MONITORING ================= -->
+  <!-- ================= PAGE 22: IAM & SECRETS MANAGER ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 20</div>
+      <div>IIITDM Kurnool &bull; Page 22</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">19. CloudWatch Monitoring & Metric Alarms</h1>
+      <h1 class="sec-title">21. AWS IAM Security & Secrets Manager</h1>
+
+      <p>
+        The security posture of CloudCampus enforces the principle of <strong>Least Privilege</strong> across compute instances and serverless functions via AWS Identity and Access Management (IAM) and AWS Secrets Manager.
+      </p>
+
+      <div class="flow-card">
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 21.1 — Runtime Secret Resolution & IAM Permission Boundaries</div>
+        <div class="flow-steps">
+          <div class="flow-step">EC2 / Lambda Boot</div>
+          <div class="flow-arrow">➔</div>
+          <div class="flow-step aws-step">IAM Role Assumed</div>
+          <div class="flow-arrow">➔</div>
+          <div class="flow-step aws-step">Secrets Manager (cloudcampus/rds)</div>
+          <div class="flow-arrow">➔</div>
+          <div class="flow-step highlight">In-Memory Connection String</div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>IAM Role / Policy</th>
+            <th>Assigned Resource</th>
+            <th>Permitted Operations & Boundaries</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CloudCampus-EC2-Role</code></td>
+            <td>EC2 Backend Instance (<code>i-03681025582d882c5</code>)</td>
+            <td><code>secretsmanager:GetSecretValue</code>, <code>s3:PutObject</code>, <code>s3:GetObject</code>, <code>lambda:InvokeFunction</code>.</td>
+          </tr>
+          <tr>
+            <td><code>CloudCampus-Lambda-Execution-Role</code></td>
+            <td>Assignment Notification & Reminder Lambdas</td>
+            <td><code>AWSLambdaVPCAccessExecutionRole</code>, <code>secretsmanager:GetSecretValue</code>, <code>sns:Publish</code>.</td>
+          </tr>
+          <tr>
+            <td><code>CloudCampus-SNS-Publish</code></td>
+            <td>Lambda Execution Role</td>
+            <td>Allows publication strictly to <code>arn:aws:sns:...:CloudCampus-Notifications</code>.</td>
+          </tr>
+          <tr>
+            <td><code>CloudCampus-EC2-Invoke-Lambda</code></td>
+            <td>EC2 IAM Role</td>
+            <td>Allows EC2 to invoke <code>CloudCampus-Assignment-Notification</code> asynchronously.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="sub-title" style="margin-top: 4px;">21.1 Zero Hardcoded Secrets Assurance</h2>
+      <div class="callout success">
+        <strong>Hardened Credential Security:</strong> Database connection strings, database passwords, and Cognito API credentials are never written to source code, environment files, or terminal logs.
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
+      <div>IAM & Secrets Manager &bull; Page 22 of 28</div>
+    </div>
+  </div>
+
+  <!-- ================= PAGE 23: CLOUDWATCH MONITORING ================= -->
+  <div class="page">
+    <div class="page-header">
+      <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
+      <div>IIITDM Kurnool &bull; Page 23</div>
+    </div>
+    <div class="page-content">
+      <h1 class="sec-title">22. CloudWatch Monitoring & Metric Alarms</h1>
 
       <p>
         Full-stack system observability is maintained via <strong>Amazon CloudWatch Dashboard</strong> (<code>CloudCampus-Monitoring</code>). The dashboard consolidates 12 telemetry metrics across EC2, ALB, API Gateway, RDS, and Lambda alongside 4 proactive alarms.
@@ -1853,7 +2109,7 @@ const htmlContent = `<!DOCTYPE html>
 
       <div class="img-box hero-img">
         <img src="${sAdminMonitor}" alt="CloudWatch Monitoring Dashboard" />
-        <div class="img-caption">Figure 19.1 — Live AWS CloudWatch Telemetry Dashboard & Alarms Status</div>
+        <div class="img-caption">Figure 22.1 — Live AWS CloudWatch Telemetry Dashboard & Alarms Status</div>
       </div>
 
       <table class="data-table" style="margin-top: 3px;">
@@ -1890,25 +2146,25 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>CloudWatch Monitoring &bull; Page 20 of 26</div>
+      <div>CloudWatch Monitoring &bull; Page 23 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 21: THREE-LAYER VERIFICATION ================= -->
+  <!-- ================= PAGE 24: THREE-LAYER VERIFICATION ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 21</div>
+      <div>IIITDM Kurnool &bull; Page 24</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">20. Three-Layer End-to-End System Verification</h1>
+      <h1 class="sec-title">23. Three-Layer End-to-End System Verification</h1>
 
       <p>
         To ensure production integrity, every major capability is validated across three independent architectural layers: <strong>Browser UI &rarr; API Gateway / Network &rarr; AWS RDS / S3 Cloud Persistence</strong>.
       </p>
 
       <div class="flow-card">
-        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Three-Layer Verification Methodology</div>
+        <div style="font-weight: 700; font-size: 7.2pt; color: #0b192c; margin-bottom: 2px;">Figure 23.1 — Three-Layer Verification Methodology</div>
         <div class="flow-steps">
           <div class="flow-step">1. Real User Action in UI</div>
           <div class="flow-arrow">➔</div>
@@ -1957,25 +2213,25 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">20.1 Cross-Verification Integrity</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">23.1 Cross-Verification Integrity</h2>
       <div class="callout success">
         <strong>Zero Artificial Mocking:</strong> Modifying a record in RDS directly reflects in the UI upon reload; conversely, creating a record in the UI immediately creates verified rows in AWS PostgreSQL.
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Three-Layer Verification &bull; Page 21 of 26</div>
+      <div>Three-Layer Verification &bull; Page 24 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 22: FUNCTIONAL TESTING MATRIX ================= -->
+  <!-- ================= PAGE 25: FUNCTIONAL TESTING MATRIX ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 22</div>
+      <div>IIITDM Kurnool &bull; Page 25</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">21. Comprehensive Functional Testing & Results</h1>
+      <h1 class="sec-title">24. Comprehensive Functional Testing & Results</h1>
 
       <p>
         The table below details the exhaustive end-to-end verification executed across all system modules, authentication states, and cloud services.
@@ -2074,18 +2330,18 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Functional Testing Matrix &bull; Page 22 of 26</div>
+      <div>Functional Testing Matrix &bull; Page 25 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 23: CLOUD VS LOCAL & SCALABILITY ================= -->
+  <!-- ================= PAGE 26: CLOUD VS LOCAL & SCALABILITY ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 23</div>
+      <div>IIITDM Kurnool &bull; Page 26</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">22. Cloud vs. Local Architecture & Scalability</h1>
+      <h1 class="sec-title">25. Cloud vs. Local Architecture & Scalability</h1>
 
       <p>
         Migrating from a local desktop development environment to a production AWS cloud architecture provides substantial durability, security, and scalability advantages.
@@ -2143,25 +2399,25 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">22.1 Scalability & Reliability Foundations</h2>
+      <h2 class="sub-title" style="margin-top: 4px;">25.1 Scalability & Reliability Foundations</h2>
       <p style="font-size: 7.5pt;">
         By separating stateless compute (EC2 Express & Lambda) from stateful persistence (RDS & S3), the architecture eliminates single-point-of-failure bottlenecks. Compute nodes can scale horizontally behind the Application Load Balancer without risk of data loss.
       </p>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Cloud vs Local & Scalability &bull; Page 23 of 26</div>
+      <div>Cloud vs Local & Scalability &bull; Page 26 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 24: COST CONSIDERATIONS & JUSTIFICATION ================= -->
+  <!-- ================= PAGE 27: COST & JUSTIFICATION ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 24</div>
+      <div>IIITDM Kurnool &bull; Page 27</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">23. AWS Cost Considerations & Architectural Rationale</h1>
+      <h1 class="sec-title">26. AWS Cost Considerations & Architectural Rationale</h1>
 
       <p>
         The cloud resource selection was guided by a strict balance of architectural capability, high reliability, and educational cost optimization.
@@ -2214,8 +2470,8 @@ const htmlContent = `<!DOCTYPE html>
         </tbody>
       </table>
 
-      <h2 class="sub-title" style="margin-top: 4px;">23.1 "Why This Architecture?" Justification Matrix</h2>
-      <table class="data-table" style="font-size: 7.2pt;">
+      <h2 class="sub-title" style="margin-top: 4px;">26.1 "Why This Architecture?" Justification Matrix</h2>
+      <table class="data-table" style="font-size: 7pt;">
         <thead>
           <tr>
             <th style="width: 25%;">Design Decision</th>
@@ -2248,109 +2504,89 @@ const htmlContent = `<!DOCTYPE html>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Cost & Architectural Rationale &bull; Page 24 of 26</div>
+      <div>Cost & Architectural Rationale &bull; Page 27 of 28</div>
     </div>
   </div>
 
-  <!-- ================= PAGE 25: VISUAL SUMMARY HIGHLIGHTS ================= -->
+  <!-- ================= PAGE 28: CAPABILITIES GRID & CONCLUSION ================= -->
   <div class="page">
     <div class="page-header">
       <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 25</div>
+      <div>IIITDM Kurnool &bull; Page 28</div>
     </div>
     <div class="page-content">
-      <h1 class="sec-title">24. CloudCampus Demonstrated Capabilities</h1>
+      <h1 class="sec-title">27. CloudCampus Capabilities, Conclusion & References</h1>
 
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 6px 0;">
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">🔐</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">AWS Cognito</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">OAuth2 / OIDC Identity, Cognito Groups, JWT Authorization</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 3px 0;">
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🔐</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">AWS Cognito</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Identity & JWT RBAC</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">☁️</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">API Gateway</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Edge HTTPS Ingress, Routing, CORS, and Throttling</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">☁️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">API Gateway</div>
+          <div style="font-size: 5.8pt; color: #64748b;">HTTPS Ingress</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">⚖️</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">AWS ALB</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Layer-7 Load Balancing with Automated Target Health Checks</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">⚖️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">AWS ALB</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Layer-7 Routing</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">🖥️</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">AWS EC2</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Clustered Express Runtime under PM2 with IAM Role Security</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🖥️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">AWS EC2</div>
+          <div style="font-size: 5.8pt; color: #64748b;">PM2 Express Cluster</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">🗄️</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">RDS PostgreSQL</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Managed Relational Database with VPC Isolation & Automated Snapshots</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🗄️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">RDS PostgreSQL</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Relational Persistence</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">📦</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">Amazon S3</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Durable Object Storage with Presigned URL Generation</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">📦</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">Amazon S3</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Object Storage</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">⚡</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">AWS Lambda</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">In-VPC Serverless Event Processing & Deadlines Verification</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">⚡</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">AWS Lambda</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Serverless Events</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">🔔</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">Amazon SNS</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">Pub/Sub Broadcast Topic for Academic Alerts</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🔔</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">Amazon SNS</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Pub/Sub Broadcasts</div>
         </div>
-
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center;">
-          <div style="font-size: 14pt;">📊</div>
-          <div style="font-size: 8pt; font-weight: 800; color: #0b192c; margin-top: 2px;">AWS CloudWatch</div>
-          <div style="font-size: 6.8pt; color: #64748b; margin-top: 2px;">12-Widget Live Dashboard, 4 Metric Alarms & Log Streams</div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">⏱️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">EventBridge</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Daily Cron Schedules</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">📊</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">CloudWatch</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Dashboard & Alarms</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🛡️</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">AWS IAM & Secrets</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Least-Privilege Roles</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; text-align: center;">
+          <div style="font-size: 10pt;">🌐</div>
+          <div style="font-size: 6.8pt; font-weight: 800; color: #0b192c;">Amazon VPC</div>
+          <div style="font-size: 5.8pt; color: #64748b;">Subnets & Endpoints</div>
         </div>
       </div>
 
-      <div class="callout aws" style="margin-top: 5px; text-align: center;">
-        <strong>Proven Production Status:</strong> All 9 cloud capability domains above are actively deployed, connected, and verified on Amazon Web Services.
-      </div>
-    </div>
-    <div class="page-footer">
-      <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Demonstrated Capabilities &bull; Page 25 of 26</div>
-    </div>
-  </div>
-
-  <!-- ================= PAGE 26: CONCLUSION & REFERENCES ================= -->
-  <div class="page">
-    <div class="page-header">
-      <div class="brand"><span class="brand-badge">AWS</span> CloudCampus Deployment Report</div>
-      <div>IIITDM Kurnool &bull; Page 26</div>
-    </div>
-    <div class="page-content">
-      <h1 class="sec-title">25. Conclusion, Future Scope & References</h1>
-
-      <h2 class="sub-title">25.1 Conclusion</h2>
-      <p style="font-size: 7.8pt;">
-        The <strong>CloudCampus</strong> project successfully demonstrates the architecture, deployment, integration, and verification of an enterprise campus management system on <strong>Amazon Web Services (AWS)</strong>. By leveraging Cognito for identity, API Gateway and ALB for secure ingress, EC2 and PM2 for reliable application compute, RDS PostgreSQL for relational persistence, S3 for object storage, Lambda and EventBridge for asynchronous serverless automation, and CloudWatch for monitoring, the system provides a robust, observable, and role-segregated cloud computing platform.
+      <h2 class="sub-title" style="margin-top: 3px;">27.1 Conclusion</h2>
+      <p style="font-size: 7.2pt;">
+        The <strong>CloudCampus</strong> project demonstrates the engineering, deployment, integration, and verification of an enterprise campus management system on <strong>Amazon Web Services (AWS)</strong>. By leveraging Cognito for identity, API Gateway and ALB for ingress, EC2 and PM2 for compute, RDS PostgreSQL for relational persistence, S3 for storage, Lambda and EventBridge for serverless automation, and CloudWatch for monitoring, the system provides a robust, observable, and role-segregated cloud computing platform.
       </p>
 
-      <h2 class="sub-title" style="margin-top: 3px;">25.2 Future Scope & Planned Enhancements</h2>
-      <ul style="padding-left: 14px; font-size: 7.2pt; line-height: 1.35; color: #334155;">
-        <li><strong>Amazon CloudFront CDN:</strong> Global edge caching for static assets and client-side bundles with custom Route 53 domain mapping.</li>
-        <li><strong>EC2 Auto Scaling Groups:</strong> Dynamic target tracking scaling based on ALB request count and CPU utilization.</li>
-        <li><strong>Multi-AZ Database Deployment:</strong> High-availability synchronous standby replica in a secondary availability zone for sub-minute failover.</li>
-        <li><strong>Mobile Push Notifications:</strong> Amazon SNS mobile push integration via Apple APNs and Google FCM.</li>
-      </ul>
-
-      <h2 class="sub-title" style="margin-top: 3px;">25.3 References & Documentation</h2>
-      <ol style="padding-left: 14px; font-size: 6.8pt; line-height: 1.3; color: #475569;">
+      <h2 class="sub-title" style="margin-top: 2px;">27.2 References & Documentation</h2>
+      <ol style="padding-left: 12px; font-size: 6.2pt; line-height: 1.25; color: #475569;">
         <li>Amazon Web Services, <em>AWS Well-Architected Framework: Reliability and Security Pillars</em>, AWS Whitepapers, 2024.</li>
         <li>Amazon Cognito Documentation, <em>Using Tokens with User Pools and OIDC Identity Providers</em>, AWS Documentation, 2026.</li>
         <li>PostgreSQL Global Development Group, <em>PostgreSQL 17.5 Documentation: Relational Integrity & Transactions</em>, 2026.</li>
@@ -2358,14 +2594,14 @@ const htmlContent = `<!DOCTYPE html>
         <li>Amazon Web Services, <em>Serverless Applications with AWS Lambda, EventBridge, and Amazon SNS</em>, AWS Architecture Center, 2026.</li>
       </ol>
 
-      <div style="margin-top: 8px; border-top: 1.5px solid #cbd5e1; padding-top: 6px; text-align: center;">
-        <div style="font-size: 8pt; font-weight: 800; color: #0b192c;">INDIAN INSTITUTE OF INFORMATION TECHNOLOGY DESIGN AND MANUFACTURING KURNOOL</div>
-        <div style="font-size: 7pt; color: #64748b; margin-top: 2px;">Department of Computer Science and Engineering &bull; Cloud Computing Project Evaluation 2026–2027</div>
+      <div style="margin-top: 5px; border-top: 1px solid #cbd5e1; padding-top: 4px; text-align: center;">
+        <div style="font-size: 7.5pt; font-weight: 800; color: #0b192c;">INDIAN INSTITUTE OF INFORMATION TECHNOLOGY DESIGN AND MANUFACTURING KURNOOL</div>
+        <div style="font-size: 6.5pt; color: #64748b; margin-top: 1px;">Department of Computer Science and Engineering &bull; Cloud Computing Project Evaluation 2026–2027</div>
       </div>
     </div>
     <div class="page-footer">
       <div>IIITDM Kurnool &bull; Dept of Computer Science & Engineering</div>
-      <div>Conclusion & References &bull; Page 26 of 26</div>
+      <div>Capabilities & Conclusion &bull; Page 28 of 28</div>
     </div>
   </div>
 
@@ -2374,14 +2610,14 @@ const htmlContent = `<!DOCTYPE html>
 `;
 
 fs.writeFileSync(path.join(reportDir, 'index.html'), htmlContent);
-console.log('✓ report/index.html generated.');
+console.log('✓ report/index.html generated with 28 pages.');
 
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const htmlPath = path.join(reportDir, 'index.html');
 const pdfPath = path.join(reportDir, 'CloudCampus_AWS_Cloud_Computing_Report.pdf');
 const mainPdfPath = path.join(reportDir, 'main.pdf');
 
-console.log('Compiling exact 26-page PDF using Headless Chrome...');
+console.log('Compiling exact 28-page PDF using Headless Chrome...');
 const cmd = `"${chromePath}" --headless --disable-gpu --run-all-compositor-stages-before-draw --no-pdf-header-footer --print-to-pdf="${pdfPath}" "file:///${htmlPath.replace(/\\\\/g, '/')}"`;
 
 try {
