@@ -1,0 +1,142 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Core Layout & Typography Packages ---
+\usepackage[a4paper, top=2.0cm, bottom=2.0cm, left=2.2cm, right=2.2cm, headheight=14pt]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb}
+
+% --- Visual & Graphics Packages ---
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, fit, calc, backgrounds, shapes.geometric}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% --- Tabular Packages ---
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+
+% --- Formatting & Sectioning ---
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xurl}
+\usepackage[colorlinks=true, linkcolor=primaryblue, citecolor=secondarygreen, urlcolor=primaryblue]{hyperref}
+
+% --- Official Institutional & Design Colors ---
+% IIITDM Kurnool Official Colors: Sapphire Blue (#2D368B) and Lime Green (#74BD44)
+\definecolor{primaryblue}{RGB}{45, 54, 139}
+\definecolor{secondarygreen}{RGB}{116, 189, 68}
+\definecolor{darknavy}{RGB}{20, 28, 70}
+\definecolor{lightbg}{RGB}{246, 249, 253}
+\definecolor{codebg}{RGB}{245, 245, 245}
+\definecolor{amber}{RGB}{217, 119, 6}
+
+% --- Section Heading Formatting ---
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{primaryblue}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{darknavy}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{primaryblue}}{\thesubsubsection}{1em}{}
+
+% Adjust section spacing
+\titlespacing*{\section}{0pt}{1.0ex plus 0.5ex minus 0.2ex}{0.8ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{0.8ex plus 0.3ex minus 0.2ex}{0.5ex plus 0.2ex}
+
+% --- Listings Formatting ---
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  captionpos=b,
+  frame=single,
+  rulecolor=\color{primaryblue!40},
+  keywordstyle=\color{primaryblue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{secondarygreen},
+  showstringspaces=false,
+  numbers=none,
+  tabsize=2
+}
+
+% --- Header & Footer Configuration ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{primaryblue}CloudCampus} --- Campus Management System}
+\fancyhead[R]{\small\textbf{IIITDM Kurnool}}
+\fancyfoot[C]{\small\textbf{Page \thepage\ of 20}}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% --- Begin Document ---
+\begin{document}
+
+% Page 1: Title Page
+\input{sections/page01_title}
+
+% Page 2: Abstract
+\input{sections/page02_abstract}
+
+% Page 3: Table of Contents & Lists
+\input{sections/page03_toc}
+
+% Page 4: Chapter 1 - Introduction and Cloud Paradigm
+\input{sections/page04_introduction}
+
+% Page 5: Chapter 2 - Problem Statement, Objectives, and Scope
+\input{sections/page05_problem_objectives}
+
+% Page 6: Chapter 3 - System Overview
+\input{sections/page06_system_overview}
+
+% Page 7: Chapter 4 - Cloud Computing Architecture
+\input{sections/page07_cloud_architecture}
+
+% Page 8: Chapter 5 - AWS Services Used
+\input{sections/page08_aws_services}
+
+% Page 9: Chapter 6 - Frontend Architecture and S3 Deployment
+\input{sections/page09_frontend_deployment}
+
+% Page 10: Chapter 7 - Backend Architecture and EC2 Deployment
+\input{sections/page10_backend_deployment}
+
+% Page 11: Chapter 8 - Database Architecture (Amazon RDS PostgreSQL)
+\input{sections/page11_database_rds}
+
+% Page 12: Chapter 9 - Authentication and Authorization (Amazon Cognito)
+\input{sections/page12_auth_cognito}
+
+% Page 13: Chapter 10 - Amazon S3 Storage Architecture
+\input{sections/page13_s3_storage}
+
+% Page 14: Chapter 11 - API Gateway and Serverless Health Probe
+\input{sections/page14_apigw_lambda}
+
+% Page 15: Chapter 12 - Observability and CloudWatch Monitoring
+\input{sections/page15_cloudwatch_monitoring}
+
+% Page 16: Chapter 13 - Application and Infrastructure Security
+\input{sections/page16_security}
+
+% Page 17: Chapter 14 - System Testing and Verification
+\input{sections/page17_testing_verification}
+
+% Page 18: Chapter 15 - Application Workflows
+\input{sections/page18_workflows}
+
+% Page 19: Chapter 16 - Deployment Challenges and Future Work
+\input{sections/page19_challenges_future}
+
+% Page 20: Chapter 17 - Conclusion and References
+\input{sections/page20_conclusion_references}
+
+\end{document}

@@ -1,0 +1,31 @@
+\newpage
+\section{Backend Architecture and EC2 Deployment}
+
+\subsection{Application Architecture and Middleware Pipeline}
+The CloudCampus backend service is built using Node.js 20/22 with Express 4.19.2 and TypeScript 5.5.4, utilizing Prisma ORM 5.18.0 for data access \cite{prisma_orm}. The request processing pipeline executes through sequential security and routing middleware:
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+    \item \textbf{Helmet Security Headers}: Enforces strict HTTP headers and cross-origin resource policies.
+    \item \textbf{CORS Origin Validation}: Validates incoming \texttt{Origin} headers against allowed S3 website domains and explicit \texttt{FRONTEND\_URL} configurations without using wildcard \texttt{*}.
+    \item \textbf{IP Rate Limiting}: Restricts client IP addresses to 300 requests per 15-minute window via \texttt{express-rate-limit}.
+    \item \textbf{Structured Request Logger}: Emits JSON-formatted logs containing request IDs, timestamps, methods, paths, and status codes for CloudWatch ingestion.
+    \item \textbf{Cryptographic JWT Authentication}: Inspects incoming Bearer tokens and validates signatures against AWS Cognito JWKS.
+    \item \textbf{Role Authorization \& Controllers}: Enforces role checks (\texttt{STUDENT}, \texttt{FACULTY}, \texttt{ADMIN}) before executing domain business logic.
+\end{enumerate}
+
+\subsection{Amazon EC2 Process Runtime \& PM2 Cluster Configuration}
+On the \texttt{CloudCampus-EC2} instance, the compiled backend (\texttt{dist/app.js}) is executed under the PM2 process manager configured in \texttt{ecosystem.config.js} to ensure automatic process restart and zero-downtime reloads:
+
+\begin{lstlisting}[language=bash, caption={Production EC2 Backend Build and PM2 Process Commands}]
+# 1. Compile TypeScript backend to JavaScript
+npm run build
+
+# 2. Start application in PM2 cluster mode on port 5000
+pm2 start ecosystem.config.js --env production
+pm2 save
+sudo pm2 startup
+
+# 3. Verify internal backend health status
+curl -i http://localhost:5000/health
+# Response: HTTP/1.1 200 OK {"status":"ok","service":"cloudcampus-backend"}
+\end{lstlisting}

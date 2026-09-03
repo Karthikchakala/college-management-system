@@ -1,0 +1,28 @@
+\newpage
+\section{Deployment Challenges and Future Work}
+
+\subsection{Deployment Challenges and Engineering Solutions}
+During the production deployment lifecycle on AWS, several real-world cloud engineering challenges were encountered and systematically resolved:
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+    \item \textbf{AWS Account-Level CloudFront Restriction}: During initial CDN setup, AWS CloudFront resource creation was blocked due to an account-level verification requirement (\textit{``Your account must be verified before you can add new CloudFront resources''}).
+    \begin{itemize}[itemsep=1pt]
+        \item \textit{Solution}: Deployed the React/Vite production build directly to **Amazon S3 Static Website Hosting** (\texttt{cloudcampus-frontend-production}) with S3 Routing Rules redirecting 404s to \texttt{index.html}, ensuring uninterrupted SPA client routing.
+    \end{itemize}
+    \item \textbf{Web Crypto API Availability over Non-Secure HTTP}: Modern web browsers restrict \texttt{window.crypto.subtle} strictly to secure contexts (\texttt{https://} or \texttt{localhost}). When accessed via plain HTTP S3 website hosting, standard Web Crypto was unavailable.
+    \begin{itemize}[itemsep=1pt]
+        \item \textit{Solution}: Implemented a resilient, pure JavaScript SHA-256 fallback in \texttt{frontend/src/services/cognito.ts} that ensures seamless PKCE \texttt{code\_challenge} generation on both HTTP and HTTPS endpoints.
+    \end{itemize}
+    \item \textbf{Keyless In-Memory Database Secret Resolution}: Standard Prisma CLI commands expect a static \texttt{DATABASE\_URL} string, which risks accidental disk persistence.
+    \begin{itemize}[itemsep=1pt]
+        \item \textit{Solution}: Engineered a custom wrapper (\texttt{scripts/prisma-with-secrets.js}) that queries AWS Secrets Manager via the EC2 IAM Role at runtime, builds the SSL connection string in process memory, and executes migrations securely.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Future Architectural Roadmap}
+Following account verification, the future infrastructure roadmap encompasses:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+    \item \textbf{CloudFront Migration with OAC}: Provision an Amazon CloudFront distribution pointing to the frontend S3 origin via Origin Access Control (OAC) and re-enable 100\% Block Public Access on \texttt{cloudcampus-frontend-production}.
+    \item \textbf{Multi-AZ Auto Scaling}: Transition backend compute from a standalone EC2 instance to an EC2 Auto Scaling Group fronted by an Application Load Balancer (ALB) across multiple availability zones.
+    \item \textbf{AWS WAF Security}: Attach AWS WAF rules to API Gateway to protect against SQL injection and cross-site scripting attacks.
+\end{itemize}

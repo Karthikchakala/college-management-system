@@ -1,0 +1,27 @@
+\newpage
+\section{Problem Statement, Objectives, and Scope}
+
+\subsection{Problem Statement}
+Existing academic management systems exhibit critical architectural vulnerabilities:
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Insecure Secret Persistence}: Storing plaintext database connection strings and API secret keys in local configuration files on host servers exposes institutional systems to unauthorized credential theft.
+    \item \textbf{Public File Storage Vulnerabilities}: Storing academic assignment submissions on publicly accessible file systems or unauthenticated web servers compromises student privacy and academic integrity.
+    \item \textbf{Monolithic Tight Coupling}: Intertwining frontend user interfaces directly with backend business logic impedes independent scaling and increases system vulnerability surface area.
+    \item \textbf{Lack of Unified Cloud Telemetry}: System administrators lack centralized visibility into compute utilization, database connection saturation, and security anomalies.
+\end{enumerate}
+
+\subsection{Project Motivation}
+The motivation for developing \textbf{CloudCampus} is to implement an enterprise-grade, cloud-native campus management solution that adheres strictly to the AWS Well-Architected Framework \cite{aws_s3, aws_ec2}. By leveraging OAuth 2.0 PKCE identity federation, in-memory secret resolution via AWS Secrets Manager, encrypted private S3 storage, and real-time CloudWatch monitoring, the platform establishes a modern standard for institutional cloud governance.
+
+\subsection{System Objectives}
+The primary technical objectives fulfilled in this work are:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+    \item \textbf{Decoupled Cloud Hosting}: Deploy the frontend to Amazon S3 Static Website Hosting and backend compute to Amazon EC2 behind an Amazon API Gateway.
+    \item \textbf{Identity Federation}: Implement Amazon Cognito User Pools with Proof Key for Code Exchange (PKCE) and cryptographic JWKS token validation.
+    \item \textbf{Encrypted Private Storage}: Enforce 100\% Block Public Access on the Amazon S3 data bucket, generating time-limited (15-minute) presigned URLs for student assignments.
+    \item \textbf{Keyless In-Memory Secrets}: Eliminate static database credentials from disk using AWS Secrets Manager and EC2 IAM Roles.
+    \item \textbf{Comprehensive Observability}: Stream application logs and operational metrics to Amazon CloudWatch, rendering live infrastructure telemetry to administrators.
+\end{itemize}
+
+\subsection{Project Scope}
+The scope encompasses three primary campus roles: Students, Faculty, and Administrators. Functional capabilities span course management, daily attendance logging, assignment submission and evaluation, examination grading, notification broadcasts, system audit tracking, and automated health checks in AWS Region \texttt{us-east-1}.
